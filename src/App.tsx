@@ -1,112 +1,67 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import { Button, DatePicker, Descriptions, DescriptionsProps, Spin } from "antd";
-
-// const url = "https://free-to-play-games-database.p.rapidapi.com/api/games";
-// const options = {
-// 	method: "GET",
-// 	headers: {
-// 		'X-RapidAPI-Key': 'a1676f9cf7msh9b40def354a3a80p10fcb6jsn1d224ff962e1',
-// 		'X-RapidAPI-Host': 'free-to-play-games-database.p.rapidapi.com'
-// 	}
-// };
-
-const url = "http://localhost:1337/games";
-const options = { method: "GET" };
-
-interface GameInfo {
-	id: number;
-	title: string;
-	thumbnail: string;
-	short_description: string;
-	game_url: string;
-	genre: string;
-	platform: string;
-	publisher: string;
-	developer: string;
-	release_date: string;
-	freetogame_profile_url: string;
-}
-
-function gameInfoToDescriptionItems(info: GameInfo) {
-	const items: DescriptionsProps['items'] = [];
-
-	for (const key in info) {
-		let value = info[key];
-
-		if (key === "thumbnail") {
-			value = <img src={value}/>;
-		}
-		items.push({
-			key,
-			label: key,
-			children: value
-		});
-	}
-
-	return items;
-}
-
-function GameCard(props: GameInfo) {
-	return (
-		<>
-		<h2>{props.title}</h2>
-		<Descriptions column={1} items={gameInfoToDescriptionItems(props)}></Descriptions>
-	</>
-	);
-}
-
-function ListOfGames({ games }: { games: GameInfo[] }) {
-	gameInfoToDescriptionItems(games[0]);
-	return (
-		<>
-		{games.map((game) => (
-			<GameCard key={game.id} {...game}/>
-		))}
-		</>
-	);
-}
+import { Select, Spin } from "antd";
+import { GameInfo, getGamesList } from "./api/games";
+import { ListOfGames } from "./ListOfGames";
 
 function App() {
-	const [count, setCount] = useState(0);
-
 	const [isLoading, setLoading] = useState(true);
 	const [games, setGames] = useState([]);
+	const [error, setError] = useState(false);
+
+	const [genres, setGenres] = useState<string[]>([]);
+	const [genreOptions, setGenreOptions] = useState([]);
+	const [genreFilter, setGenreFilter] = useState<string[]>([]);
+
+	const updateGames = (games: GameInfo[]) => {
+		setGames(games);
+
+		const allGenres = games.map((game) => game.genre.trim()).sort();
+
+		const uniqueGenres = new Set(allGenres);
+		setGenres(Array.from(uniqueGenres));
+
+		setGenreOptions(Array.from(uniqueGenres).map(g => ({label: g, value: g}) ));
+	};
+
+	const handleGenreChanged = (genres: string[]) => {
+		setGenreFilter(genres);
+	}
+
+	const filterGame = (game: GameInfo) => {
+		if (genreFilter.length > 0)
+		{
+			return genreFilter.includes(game.genre)
+		}
+
+		return true;
+	}
 
 	useEffect(() => {
-		fetch(url, options)
-			.then((response) => response.json())
-			.then((data) => {
-				setLoading(false);
-				setGames(data);
-			});
+		getGamesList()
+			.then(
+				(games) => updateGames(games),
+				(error) => setError(error)
+			)
+			.finally(() => setLoading(false));
 	}, []);
 
 	return (
 		<>
-			<div>
-				<a href="https://vitejs.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
+			<h1>Free to Game</h1>
 
-				<Button>Hello</Button>
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-
-			{isLoading ? <Spin spinning={isLoading} /> : <ListOfGames games={games} />}
-
+			<Select
+				mode="multiple"
+				allowClear
+				style={{ width: '100%' }}
+				placeholder="Select genres"
+				defaultValue={[]}
+				onChange={handleGenreChanged}
+				options={genreOptions}
+			/>
+			{isLoading && <Spin spinning={isLoading} />}
+			{error && "A network error has occured. Please try again later."}
+			{games.length > 0 && <ListOfGames games={games.filter(filterGame)} />}
 		</>
 	);
 }
