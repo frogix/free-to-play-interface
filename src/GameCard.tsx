@@ -1,5 +1,6 @@
-import { Descriptions, DescriptionsProps } from "antd";
+import { Descriptions, DescriptionsProps, Image } from "antd";
 import { GameInfo } from "./api/games";
+import Title from "antd/es/typography/Title";
 
 function gameInfoToDescriptionItems(info: GameInfo) {
 	const items: DescriptionsProps["items"] = [];
@@ -8,7 +9,7 @@ function gameInfoToDescriptionItems(info: GameInfo) {
 		let value = info[key];
 
 		if (key === "thumbnail") {
-			value = <img src={value} />;
+			value = <Image src={value} />;
 		}
 		items.push({
 			key,
@@ -24,7 +25,7 @@ export function GameCard(props: GameInfo) {
 
     return (
         <>
-            <h2>{props.title}</h2>
+            <Title level={2}>{props.title}</Title>
             <Descriptions column={1} items={gameInfoToDescriptionItems(props)}></Descriptions>
         </>
     );
