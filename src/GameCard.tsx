@@ -1,33 +1,45 @@
-import { Descriptions, DescriptionsProps, Image } from "antd";
+import { Descriptions, DescriptionsProps, Image, Row, Tag } from "antd";
 import { GameInfo } from "./api/games";
 import Title from "antd/es/typography/Title";
+import Paragraph from "antd/es/typography/Paragraph";
 
 function gameInfoToDescriptionItems(info: GameInfo) {
 	const items: DescriptionsProps["items"] = [];
 
-	for (const key in info) {
-		let value = info[key];
+	const displayedKeysMap = {
+		developer: "Developer",
+		release_date: "Release date"
+	};
 
-		if (key === "thumbnail") {
-			value = <Image src={value} />;
-		}
+	for (const key in displayedKeysMap) {
+		const gameField = key as keyof GameInfo;
 		items.push({
 			key,
-			label: key,
-			children: value
+			label: displayedKeysMap[key],
+			children: info[gameField]
 		});
 	}
 
 	return items;
 }
 
-export function GameCard(props: GameInfo) {
-
-    return (
-        <>
-            <Title level={2}>{props.title}</Title>
-            <Descriptions column={1} items={gameInfoToDescriptionItems(props)}></Descriptions>
-        </>
-    );
+export function GameCard(game: GameInfo) {
+	return (
+		<>
+			<Row>
+				<Title level={4}>{game.title}</Title>
+			</Row>
+			<Row>
+				<Image src={game.thumbnail} />
+			</Row>
+			<Tag>{game.genre}</Tag>
+			{game.platform.includes(",") ? (
+				game.platform.split(",").map((p) => <Tag>{p.trim()}</Tag>)
+			) : (
+				<Tag>{game.platform}</Tag>
+			)}
+			<Paragraph ellipsis={true}>{game.short_description}</Paragraph>
+			<Descriptions column={1} items={gameInfoToDescriptionItems(game)}></Descriptions>
+		</>
+	);
 }
-
