@@ -1,51 +1,91 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import { Col, Layout, Menu, Row, Select, Spin, theme } from "antd";
-import { GameInfo, getGamesList } from "./api/games";
-import { ListOfGames } from "./ListOfGames";
+import { Col, Layout, Menu, Row, theme } from "antd";
 import Title from "antd/es/typography/Title";
 import { Content, Footer, Header } from "antd/es/layout/layout";
-import { BaseOptionType } from "antd/es/select";
+
+import "./App.css";
+import {
+	GameFieldsPossibleValues,
+	GameInfo,
+	getFieldsPossibleValues,
+	getGamesList
+} from "./api/games";
+import { ListOfGames } from "./ListOfGames";
+import Filters from "./Filters";
+
+type Primitive = number | string | boolean;
+
+export interface SortMethod {
+	field: "title" | "release_date";
+	isAscending: boolean;
+}
 
 function App() {
 	const [isLoading, setLoading] = useState(true);
 	const [games, setGames] = useState<GameInfo[]>([]);
 	const [error, setError] = useState<Error | undefined>();
 
-	const [genres, setGenres] = useState<string[]>([]);
-	const [genreOptions, setGenreOptions] = useState<BaseOptionType[]>([]);
-	const [genreFilter, setGenreFilter] = useState<string[]>([]);
+	const [sortMethod, setSortMethod] = useState<SortMethod>({
+		field: "title",
+		isAscending: true
+	});
 
-	const updateGames = (games: GameInfo[]) => {
-		setGames(games);
+	const [filterAvailableValues, setFilterAvailableValues] =
+		useState<GameFieldsPossibleValues | null>(null);
 
-		const allGenres = games.map((game) => game.genre.trim()).sort();
+	const [filteredFields, setFilteredFields] = useState<GameFieldsPossibleValues | null>(null);
 
-		const uniqueGenres = new Set(allGenres);
-		setGenres(Array.from(uniqueGenres));
+	const checkIfArraysIntercept = (arr1: Primitive[], arr2: Primitive[]) => {
+		if (!arr1 || !arr1.length || !arr2 || !arr2.length) return false;
 
-		setGenreOptions(Array.from(uniqueGenres).map((g) => ({ label: g, value: g })));
-	};
+		for (const el of arr1) {
+			if (arr2.includes(el)) return true;
+		}
 
-	const handleGenreChanged = (genres: string[]) => {
-		setGenreFilter(genres);
+		return false;
 	};
 
 	const filterGame = (game: GameInfo) => {
-		if (genreFilter.length > 0) {
-			return genreFilter.includes(game.genre);
+		const genre = filteredFields?.genre;
+		const platform = filteredFields?.platform;
+
+		if (genre && genre.length > 0 && !genre.includes(game.genre)) {
+			return false;
+		}
+
+		if (platform && platform.length > 0 && !checkIfArraysIntercept(platform, game.platform)) {
+			return false;
 		}
 
 		return true;
 	};
 
+	const sortGames = (game1: GameInfo, game2: GameInfo) => {
+		const { field, isAscending } = sortMethod;
+
+		const gameField = field as keyof GameInfo;
+
+		const field1 = game1[gameField];
+		const field2 = game2[gameField];
+
+		if (!isAscending) {
+			return field2 > field1 ? 1 : -1;
+		}
+
+		return field2 < field1 ? 1 : -1;
+	};
+
 	useEffect(() => {
 		getGamesList()
 			.then(
-				(games: GameInfo[]) => updateGames(games),
+				(games: GameInfo[]) => setGames(games),
 				(error: Error) => setError(error)
 			)
 			.finally(() => setLoading(false));
+
+		getFieldsPossibleValues().then((filterValues: GameFieldsPossibleValues) =>
+			setFilterAvailableValues(filterValues)
+		);
 	}, []);
 
 	const {
@@ -62,27 +102,24 @@ function App() {
 			<Layout>
 				<Content style={{ padding: "0 50px", backgroundColor: colorBgContainer }}>
 					<Row gutter={16}>
-						<Col span={6}>
-							<Title level={2}>Filter</Title>
-
-							<Title level={3}>Genre</Title>
-							<Select
-								mode="multiple"
-								allowClear
-								style={{ width: "100%" }}
-								placeholder="Select genres"
-								defaultValue={[]}
-								onChange={handleGenreChanged}
-								options={genreOptions}
+						<Col lg={6}>
+							<Filters
+								possibleValues={filterAvailableValues}
+								onSortMethodChanged={(sortMethod: SortMethod) =>
+									setSortMethod(sortMethod)
+								}
+								onSomeFilterChanged={(newFilter: GameFieldsPossibleValues) =>
+									setFilteredFields(newFilter)
+								}
 							/>
 						</Col>
-						<Col offset={1} span={17}>
+						<Col lg={{ span: 17, offset: 1 }}>
 							<Title level={1}>Free to Game</Title>
 
 							<ListOfGames
 								isLoading={isLoading}
 								error={error}
-								games={games.filter(filterGame)}
+								games={games.filter(filterGame).sort(sortGames)}
 							/>
 						</Col>
 					</Row>
