@@ -1,14 +1,16 @@
-import Select from "antd/es/select";
 import Title from "antd/es/typography/Title";
-import { GameFieldsPossibleValues } from "./api/games";
-import { SortMethod } from "./App";
-import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
 import { MouseEventHandler } from "react";
+import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
+
+import FilterSelect from "./FilterSelect";
+import { GameFieldsPossibleValues } from "./api/games";
+import { SortMethod } from "./App";
 
 interface FiltersProps {
-	sortMethod: SortMethod,
+	sortMethod: SortMethod;
 	possibleValues: GameFieldsPossibleValues;
+	currentFilter: GameFieldsPossibleValues;
 	onSomeFilterChanged: (newFilterValues: GameFieldsPossibleValues) => void;
 	onSortMethodChanged: (newSortMethod: SortMethod) => void;
 }
@@ -28,16 +30,9 @@ export default function Filters({
 	sortMethod,
 	possibleValues,
 	onSomeFilterChanged,
-	onSortMethodChanged
+	onSortMethodChanged,
+	currentFilter
 }: FiltersProps) {
-	const currentFilter: GameFieldsPossibleValues = {
-		genre: [],
-		platform: [],
-		publisher: [],
-		developer: [],
-		release_date: null
-	};
-
 	const sortByFieldsMap = {
 		title: "Title",
 		release_date: "Release date"
@@ -54,11 +49,11 @@ export default function Filters({
 			<Title level={2}>Sort</Title>
 			<Row>
 				<Col span={21}>
-					<Select
-						allowClear
+					<FilterSelect
+						// allowClear
 						style={{ width: "100%" }}
 						placeholder="Sort by..."
-						defaultValue={[]}
+						defaultValue={["title"]}
 						onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value })}
 						options={Object.keys(sortByFieldsMap).map((k) => ({
 							label: sortByFieldsMap[k],
@@ -67,18 +62,18 @@ export default function Filters({
 					/>
 				</Col>
 
-				<Col style={{textAlign: "right"}} span={3}>
+				<Col style={{ textAlign: "right" }} span={3}>
 					<SortDirectionChangeButton
 						isAscending={sortMethod.isAscending}
 						onDirectionChange={onSortDirectionChanged}
-						/>
+					/>
 				</Col>
 			</Row>
 
 			<Title level={2}>Filter</Title>
 
 			<Title level={3}>Genre</Title>
-			<Select
+			<FilterSelect
 				mode="multiple"
 				allowClear
 				style={{ width: "100%" }}
@@ -89,7 +84,7 @@ export default function Filters({
 			/>
 
 			<Title level={3}>Platform</Title>
-			<Select
+			<FilterSelect
 				mode="multiple"
 				allowClear
 				style={{ width: "100%" }}
