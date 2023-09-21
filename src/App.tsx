@@ -104,6 +104,7 @@ function App() {
 					<Row gutter={16}>
 						<Col lg={6}>
 							<Filters
+								sortMethod={sortMethod}
 								possibleValues={filterAvailableValues}
 								onSortMethodChanged={(sortMethod: SortMethod) =>
 									setSortMethod(sortMethod)

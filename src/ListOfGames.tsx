@@ -1,6 +1,6 @@
-import { Spin } from "antd";
+import { Skeleton, Spin } from "antd";
 import { GameInfo } from "./api/games";
-import { GameCard } from "./GameCard";
+import { GameCard, GameCardSkeleton } from "./GameCard";
 
 interface ListOfGamesProps {
 	games: GameInfo[];
@@ -9,9 +9,18 @@ interface ListOfGamesProps {
 }
 
 export function ListOfGames({ games, isLoading, error }: ListOfGamesProps) {
+	if (isLoading) {
+		return (
+			<>
+				{new Array(3).fill(0).map((_, i) => (
+					<GameCardSkeleton key={i} />
+				))}
+			</>
+		);
+	}
+
 	return (
 		<>
-			{isLoading && <Spin spinning={isLoading} />}
 			{error && "A network error has occured. Please try again later."}
 			{games.map((game) => (
 				<GameCard key={game.id} {...game} />

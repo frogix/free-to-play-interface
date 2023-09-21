@@ -1,18 +1,31 @@
-import { Descriptions, DescriptionsProps, Image, Row, Tag } from "antd";
+import { Descriptions, DescriptionsProps, Image, Row, Skeleton, Tag } from "antd";
 import { GameInfo } from "./api/games";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
 
-const dateFormat = new Intl.DateTimeFormat('ru-RU');
-
+const dateFormat = new Intl.DateTimeFormat("ru-RU");
 
 function gameInfoToDescriptionItems(info: GameInfo) {
 	const items: DescriptionsProps["items"] = [
 		{ key: "developer", label: "Developer", children: info.developer },
-		{ key: "release_date", label: "Release date", children: dateFormat.format(info.release_date) },
+		{
+			key: "release_date",
+			label: "Release date",
+			children: dateFormat.format(info.release_date)
+		}
 	];
 
 	return items;
+}
+
+export function GameCardSkeleton() {
+	return (
+		<>
+			<Skeleton active={true} paragraph={false} />
+			<Skeleton.Image active />
+			<Skeleton active={true} title={false} />
+		</>
+	);
 }
 
 export function GameCard(game: GameInfo) {

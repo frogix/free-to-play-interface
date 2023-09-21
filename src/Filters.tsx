@@ -2,14 +2,34 @@ import Select from "antd/es/select";
 import Title from "antd/es/typography/Title";
 import { GameFieldsPossibleValues } from "./api/games";
 import { SortMethod } from "./App";
+import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
+import { Button, Col, Row } from "antd";
+import { MouseEventHandler } from "react";
 
 interface FiltersProps {
+	sortMethod: SortMethod,
 	possibleValues: GameFieldsPossibleValues;
 	onSomeFilterChanged: (newFilterValues: GameFieldsPossibleValues) => void;
 	onSortMethodChanged: (newSortMethod: SortMethod) => void;
 }
 
-export default function Filters({ possibleValues, onSomeFilterChanged, onSortMethodChanged }: FiltersProps) {
+function SortDirectionChangeButton({
+	isAscending,
+	onDirectionChange
+}: {
+	isAscending: boolean;
+	onDirectionChange: MouseEventHandler;
+}) {
+	const icon = isAscending ? <SortDescendingOutlined /> : <SortAscendingOutlined />;
+	return <Button icon={icon} shape="circle" onClick={onDirectionChange} />;
+}
+
+export default function Filters({
+	sortMethod,
+	possibleValues,
+	onSomeFilterChanged,
+	onSortMethodChanged
+}: FiltersProps) {
 	const currentFilter: GameFieldsPossibleValues = {
 		genre: [],
 		platform: [],
@@ -18,11 +38,6 @@ export default function Filters({ possibleValues, onSomeFilterChanged, onSortMet
 		release_date: null
 	};
 
-	const sortMethod: SortMethod = {
-		field: "title",
-		isAscending: true
-	}
-
 	const sortByFieldsMap = {
 		title: "Title",
 		release_date: "Release date"
@@ -30,17 +45,35 @@ export default function Filters({ possibleValues, onSomeFilterChanged, onSortMet
 
 	if (!possibleValues) return <>Loading...</>;
 
+	const onSortDirectionChanged = () => {
+		onSortMethodChanged({ ...sortMethod, isAscending: !sortMethod.isAscending });
+	};
+
 	return (
 		<>
 			<Title level={2}>Sort</Title>
-			<Select
-				allowClear
-				style={{ width: "100%" }}
-				placeholder="Sort by..."
-				defaultValue={[]}
-				onChange={(value) => onSortMethodChanged({...sortMethod, field: value})}
-				options={Object.keys(sortByFieldsMap).map((k) => ({ label: sortByFieldsMap[k], value: k }))}
-			/>
+			<Row>
+				<Col span={21}>
+					<Select
+						allowClear
+						style={{ width: "100%" }}
+						placeholder="Sort by..."
+						defaultValue={[]}
+						onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value })}
+						options={Object.keys(sortByFieldsMap).map((k) => ({
+							label: sortByFieldsMap[k],
+							value: k
+						}))}
+					/>
+				</Col>
+
+				<Col style={{textAlign: "right"}} span={3}>
+					<SortDirectionChangeButton
+						isAscending={sortMethod.isAscending}
+						onDirectionChange={onSortDirectionChanged}
+						/>
+				</Col>
+			</Row>
 
 			<Title level={2}>Filter</Title>
 
