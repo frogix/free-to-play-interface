@@ -1,7 +1,14 @@
+interface GameThumbnail {
+	w: number,
+	h: number,
+	hash: string
+}
+
 export interface GameInfo {
 	id: number;
 	title: string;
 	thumbnail: string;
+	thumbnail_lazy: GameThumbnail;
 	short_description: string;
 	game_url: string;
 	genre: string;

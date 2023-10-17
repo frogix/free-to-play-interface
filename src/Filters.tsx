@@ -5,12 +5,12 @@ import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons
 
 import FilterSelect from "./FilterSelect";
 import { GameFieldsPossibleValues } from "./api/games";
-import { SortMethod } from "./App";
+import { SortField, SortMethod } from "./App";
 
 interface FiltersProps {
 	sortMethod: SortMethod;
-	possibleValues: GameFieldsPossibleValues;
-	currentFilter: GameFieldsPossibleValues;
+	possibleValues: GameFieldsPossibleValues | null;
+	currentFilter: GameFieldsPossibleValues | undefined;
 	onSomeFilterChanged: (newFilterValues: GameFieldsPossibleValues) => void;
 	onSortMethodChanged: (newSortMethod: SortMethod) => void;
 }
@@ -50,11 +50,9 @@ export default function Filters({
 			<Row>
 				<Col span={21}>
 					<FilterSelect
-						// allowClear
-						style={{ width: "100%" }}
 						placeholder="Sort by..."
-						defaultValue={["title"]}
-						onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value })}
+						defaultValue={"title"}
+						onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value as SortField })}
 						options={Object.keys(sortByFieldsMap).map((k) => ({
 							label: sortByFieldsMap[k],
 							value: k
@@ -75,10 +73,8 @@ export default function Filters({
 			<Title level={3}>Genre</Title>
 			<FilterSelect
 				mode="multiple"
-				allowClear
 				style={{ width: "100%" }}
 				placeholder="Select genres..."
-				defaultValue={[]}
 				onChange={(value) => onSomeFilterChanged({ ...currentFilter, genre: value })}
 				options={possibleValues.genre.map((g) => ({ label: g, value: g }))}
 			/>
@@ -86,10 +82,8 @@ export default function Filters({
 			<Title level={3}>Platform</Title>
 			<FilterSelect
 				mode="multiple"
-				allowClear
 				style={{ width: "100%" }}
 				placeholder="Select platforms..."
-				defaultValue={[]}
 				onChange={(value) => onSomeFilterChanged({ ...currentFilter, platform: value })}
 				options={possibleValues.platform.map((g) => ({ label: g, value: g }))}
 			/>

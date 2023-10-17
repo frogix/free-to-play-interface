@@ -15,8 +15,10 @@ import Filters from "./Filters";
 
 type Primitive = number | string | boolean;
 
+export type SortField = "title" | "release_date";
+
 export interface SortMethod {
-	field: "title" | "release_date";
+	field: SortField;
 	isAscending: boolean;
 }
 
@@ -33,7 +35,7 @@ function App() {
 	const [filterAvailableValues, setFilterAvailableValues] =
 		useState<GameFieldsPossibleValues | null>(null);
 
-	const [filteredFields, setFilteredFields] = useState<GameFieldsPossibleValues | null>(null);
+	const [filteredFields, setFilteredFields] = useState<GameFieldsPossibleValues>();
 
 	const checkIfArraysIntercept = (arr1: Primitive[], arr2: Primitive[]) => {
 		if (!arr1 || !arr1.length || !arr2 || !arr2.length) return false;

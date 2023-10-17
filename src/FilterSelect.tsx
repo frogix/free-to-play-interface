@@ -1,6 +1,7 @@
 import Select from "antd/es/select";
-import { Checkbox, Radio } from "antd";
-import { ReactNode } from "react";
+import { Checkbox, Radio, RadioChangeEvent } from "antd";
+import { ButtonHTMLAttributes, ReactNode } from "react";
+import { CheckboxValueType } from "antd/es/checkbox/Group";
 
 
 interface MySmartSelectOption {
@@ -9,13 +10,15 @@ interface MySmartSelectOption {
 }
 
 interface MySmartSelectProps {
-	checkboxMaxCount: number;
+	checkboxMaxCount?: number;
 	placeholder: string;
-	defaultValue: string | null | undefined;
+	defaultValue: string | number | boolean | null | undefined;
 	onChange: (value: string | string[]) => void;
 	options: MySmartSelectOption[];
-	mode: "multiple" | "tags";
+	mode?: "multiple" | "tags";
 }
+
+type SelectValueType = string | string[] | null | undefined;
 
 /**
  * Select that converts to checkbox list if items count is less than maxCount
@@ -28,6 +31,15 @@ export default function FilterSelect({
 	onChange,
 	mode = "tags"
 }: MySmartSelectProps) {
+
+	const onRadioValueChanged = (e: RadioChangeEvent) => {
+		handleValueChange(e.target.value);
+	};
+
+	const onCheckboxValueChanged = (v: CheckboxValueType[]) => {
+		handleValueChange(v as string[])
+	};
+
 	const handleValueChange = (value: string | string[]) => {
 		onChange(value);
 	};
@@ -39,7 +51,7 @@ export default function FilterSelect({
 				allowClear
 				style={{ width: "100%" }}
 				placeholder={placeholder}
-				defaultValue={defaultValue}
+				defaultValue={defaultValue as SelectValueType}
 				onChange={handleValueChange}
 				options={options}
 			/>
@@ -51,8 +63,8 @@ export default function FilterSelect({
 			<Checkbox.Group
 				style={{ width: "100%", display: "flex", flexDirection: "column" }}
 				options={options}
-				defaultValue={defaultValue}
-				onChange={handleValueChange}
+				defaultValue={[defaultValue as CheckboxValueType]}
+				onChange={onCheckboxValueChanged}
 			/>
 		);
 	}
@@ -60,8 +72,8 @@ export default function FilterSelect({
 	return (
 		<Radio.Group
 			style={{ width: "100%", display: "flex", flexDirection: "column" }}
-			defaultValue={defaultValue[0]}
-			onChange={handleValueChange}
+			defaultValue={defaultValue}
+			onChange={onRadioValueChanged}
 			options={options}
 		></Radio.Group>
 	);
