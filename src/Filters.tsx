@@ -5,7 +5,7 @@ import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons
 
 import FilterSelect from "./FilterSelect";
 import { GameFieldsPossibleValues } from "./api/games";
-import { SortField, SortMethod } from "./App";
+import { SortField, SortMethod } from "./GamesListScreen";
 
 interface FiltersProps {
 	sortMethod: SortMethod;
@@ -38,7 +38,7 @@ export default function Filters({
 		release_date: "Release date"
 	};
 
-	if (!possibleValues) return <>Loading...</>;
+	if (!possibleValues) return <></>;
 
 	const onSortDirectionChanged = () => {
 		onSortMethodChanged({ ...sortMethod, isAscending: !sortMethod.isAscending });

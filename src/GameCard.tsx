@@ -8,7 +8,8 @@ const dateFormat = new Intl.DateTimeFormat("ru-RU");
 
 function gameInfoToDescriptionItems(info: GameInfo) {
 	const items: DescriptionsProps["items"] = [
-		{ key: "developer", label: "Developer", children: info.developer },
+		// { key: "developer", label: "Developer", children: info.developer },
+		{ key: "publisher", label: "Publisher", children: info.publisher },
 		{
 			key: "release_date",
 			label: "Release date",
@@ -33,13 +34,12 @@ export function GameCard(game: GameInfo) {
 	return (
 		<>
 			<Title level={4}>{game.title}</Title>
-				<Image
-					alt={game.title}
-					preview={false}
-					src={game.thumbnail}
-					width={400}
-					placeholder={
-
+			<Image
+				alt={game.title}
+				preview={false}
+				src={game.thumbnail}
+				width={400}
+				placeholder={
 					<Blurhash
 						hash={game.thumbnail_lazy.hash}
 						width={game.thumbnail_lazy.w}
@@ -47,9 +47,9 @@ export function GameCard(game: GameInfo) {
 						resolutionX={32}
 						resolutionY={32}
 						punch={1}
-						/>
-					}
-				/>
+					/>
+				}
+			/>
 			<Tag>{game.genre}</Tag>
 			{game.platform.map((p) => (
 				<Tag key={p}>{p.trim()}</Tag>

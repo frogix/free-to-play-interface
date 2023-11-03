@@ -1,7 +1,7 @@
 interface GameThumbnail {
-	w: number,
-	h: number,
-	hash: string
+	w: number;
+	h: number;
+	hash: string;
 }
 
 export interface GameInfo {
@@ -60,4 +60,10 @@ export const getGamesList = (): Promise<GameInfo[]> => {
 	return fetch(BASE_URL + "/games")
 		.then((response) => response.json())
 		.then((games) => games.map((g) => ({ ...g, release_date: tryParseDate(g.release_date) })));
+};
+
+export const getGameInfo = (gameId: number): Promise<GameInfo> => {
+	return fetch(BASE_URL + "/game/" + gameId)
+		.then((response) => response.json())
+		.then((game) => ({...game, release_date: tryParseDate(game.release_date)}));
 };
