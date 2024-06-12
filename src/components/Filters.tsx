@@ -4,7 +4,7 @@ import { MouseEventHandler } from "react";
 import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 
 import FilterSelect from "./FilterSelect";
-import { GameFieldsPossibleValues } from "./api/games";
+import { GameFieldsPossibleValues } from "../api/games";
 import { SortField, SortMethod } from "./GamesListScreen";
 
 interface FiltersProps {
@@ -22,7 +22,7 @@ function SortDirectionChangeButton({
 	isAscending: boolean;
 	onDirectionChange: MouseEventHandler;
 }) {
-	const icon = isAscending ? <SortDescendingOutlined /> : <SortAscendingOutlined />;
+	const icon = isAscending ? <SortAscendingOutlined /> : <SortDescendingOutlined />;
 	return <Button icon={icon} shape="circle" onClick={onDirectionChange} />;
 }
 

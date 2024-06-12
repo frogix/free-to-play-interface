@@ -1,0 +1,30 @@
+import { ConfigProvider, Layout } from "antd";
+import { Footer, Header } from "antd/es/layout/layout";
+import { Outlet } from "react-router-dom";
+import { TopMenu } from "../components/TopMenu";
+
+export function Root() {
+	return (
+		<ConfigProvider
+			theme={{
+				components: {
+					Image: {
+						// previewOperationColor: "red"
+					}
+				}
+			}}
+		>
+			<Layout>
+				<Header>
+					<TopMenu />
+				</Header>
+			</Layout>
+
+			<Outlet />
+
+			<Layout>
+				<Footer style={{ textAlign: "center" }}>Created by frogix in 2023.</Footer>
+			</Layout>
+		</ConfigProvider>
+	);
+}

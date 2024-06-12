@@ -4,8 +4,8 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import "./index.css";
 import { Root } from "./routes/root.tsx";
-import { GamesListScreen } from "./GamesListScreen.tsx";
-import { GameCardPage, gameInfoLoader } from "./routes/game.tsx";
+import { GameCardPage } from "./routes/game.tsx";
+import { GamesListScreen } from "./components/GamesListScreen.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
 			{
 				path: "game/:gameId",
 				element: <GameCardPage />,
-				loader: gameInfoLoader
+				loader: GameCardPage.loader
 			}
 		]
 	}

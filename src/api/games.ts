@@ -4,6 +4,21 @@ interface GameThumbnail {
 	hash: string;
 }
 
+export interface UnparsedGameInfo {
+	id: number;
+	title: string;
+	thumbnail: string;
+	thumbnail_lazy: GameThumbnail;
+	short_description: string;
+	game_url: string;
+	genre: string;
+	platform: string;
+	publisher: string;
+	developer: string;
+	release_date: string;
+	freetogame_profile_url: string;
+}
+
 export interface GameInfo {
 	id: number;
 	title: string;
@@ -17,6 +32,26 @@ export interface GameInfo {
 	developer: string;
 	release_date: Date;
 	freetogame_profile_url: string;
+}
+
+type ScreenshotData = {
+	id: number;
+	image: string;
+};
+
+export type SystemRequirements = {
+	os: string;
+	processor: string;
+	memory: string;
+	graphics: string;
+	storage: string;
+};
+
+export interface DetailedGameInfo extends GameInfo {
+	description: string;
+	status: string;
+	minimum_system_requirements: SystemRequirements;
+	screenshots: ScreenshotData[];
 }
 
 interface TimeSpan {
@@ -56,14 +91,40 @@ const tryParseDate = (dateStr: string): Date | string => {
 	return dateStr;
 };
 
+const parseGameObject = (gameObject: UnparsedGameInfo): DetailedGameInfo => {
+	const parsedObject = {
+		...gameObject,
+		release_date: tryParseDate(gameObject.release_date),
+		platform: splitPlatform(gameObject.platform)
+	};
+
+	return parsedObject as DetailedGameInfo;
+};
+
 export const getGamesList = (): Promise<GameInfo[]> => {
 	return fetch(BASE_URL + "/games")
 		.then((response) => response.json())
-		.then((games) => games.map((g) => ({ ...g, release_date: tryParseDate(g.release_date) })));
+		.then((games) => games.map(parseGameObject));
 };
 
-export const getGameInfo = (gameId: number): Promise<GameInfo> => {
-	return fetch(BASE_URL + "/game/" + gameId)
+const splitPlatform = (platformString: string) => {
+	if (!platformString) return [];
+
+	return platformString.split(",").map((p) => p.trim());
+};
+
+const handleError = (error: Error) => {
+	console.error(error)
+	return null;
+}
+
+export const getGameInfo = (gameId: number): Promise<DetailedGameInfo | null> => {
+	return fetch(BASE_URL + "/game?id=" + gameId)
+		.then((response) => {
+			if (response.status !== 200) throw new Error("Game not found");
+			return response;
+		})
 		.then((response) => response.json())
-		.then((game) => ({...game, release_date: tryParseDate(game.release_date)}));
+		.then(parseGameObject)
+		.catch(handleError);
 };

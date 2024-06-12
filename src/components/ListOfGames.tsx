@@ -1,4 +1,4 @@
-import { GameInfo } from "./api/games";
+import { GameInfo } from "../api/games";
 import { GameCard, GameCardSkeleton } from "./GameCard";
 
 interface ListOfGamesProps {
@@ -21,7 +21,7 @@ export function ListOfGames({ games, isLoading, error }: ListOfGamesProps) {
 	return (
 		<>
 			{error && "A network error has occured. Please try again later."}
-			{games.map((game) => (
+			{games.slice(0, 3).map((game) => (
 				<GameCard key={game.id} {...game} />
 			))}
 		</>
