@@ -16,6 +16,7 @@ interface MySmartSelectProps {
 	onChange: (value: string | string[]) => void;
 	options: MySmartSelectOption[];
 	mode?: "multiple" | "tags";
+	style?: React.CSSProperties;
 }
 
 type SelectValueType = string | string[] | null | undefined;
@@ -29,7 +30,8 @@ export default function FilterSelect({
 	placeholder,
 	defaultValue,
 	onChange,
-	mode = "tags"
+	mode = "tags",
+	style
 }: MySmartSelectProps) {
 
 	const onRadioValueChanged = (e: RadioChangeEvent) => {
@@ -49,7 +51,7 @@ export default function FilterSelect({
 			<Select
 				mode={mode}
 				allowClear
-				style={{ width: "100%" }}
+				style={style || { width: "100%" }}
 				placeholder={placeholder}
 				defaultValue={defaultValue as SelectValueType}
 				onChange={handleValueChange}
@@ -61,7 +63,7 @@ export default function FilterSelect({
 	if (mode === "multiple") {
 		return (
 			<Checkbox.Group
-				style={{ width: "100%", display: "flex", flexDirection: "column" }}
+				style={style || { width: "100%", display: "flex", flexDirection: "column" }}
 				options={options}
 				defaultValue={[defaultValue as CheckboxValueType]}
 				onChange={onCheckboxValueChanged}
@@ -71,7 +73,7 @@ export default function FilterSelect({
 
 	return (
 		<Radio.Group
-			style={{ width: "100%", display: "flex", flexDirection: "column" }}
+			style={style || { width: "100%", display: "flex", flexDirection: "column" }}
 			defaultValue={defaultValue}
 			onChange={onRadioValueChanged}
 			options={options}

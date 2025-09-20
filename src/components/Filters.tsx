@@ -1,7 +1,7 @@
 import Title from "antd/es/typography/Title";
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row, Card, Space, Divider } from "antd";
 import { MouseEventHandler } from "react";
-import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
+import { SortAscendingOutlined, SortDescendingOutlined, FilterOutlined } from "@ant-design/icons";
 
 import FilterSelect from "./FilterSelect";
 import { GameFieldsPossibleValues } from "../api/games";
@@ -33,7 +33,7 @@ export default function Filters({
 	onSortMethodChanged,
 	currentFilter
 }: FiltersProps) {
-	const sortByFieldsMap = {
+	const sortByFieldsMap: Record<SortField, string> = {
 		title: "Title",
 		release_date: "Release date"
 	};
@@ -45,48 +45,93 @@ export default function Filters({
 	};
 
 	return (
-		<>
-			<Title level={3}>Sort by</Title>
-			<Row>
-				<Col span={21}>
+		<Card
+			title={
+				<Space>
+					<FilterOutlined />
+					<span>Filters & Sorting</span>
+				</Space>
+			}
+			style={{
+				marginBottom: 16,
+				borderRadius: 8,
+				boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+			}}
+			bodyStyle={{ padding: '16px 20px' }}
+		>
+			<Space direction="vertical" size="middle" style={{ width: '100%' }}>
+				<div>
+					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
+						Sort by
+					</Title>
+					<Row gutter={8}>
+						<Col span={18}>
+							<FilterSelect
+								placeholder="Sort by..."
+								defaultValue={"title"}
+								onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value as SortField })}
+								options={Object.keys(sortByFieldsMap).map((k) => ({
+									label: sortByFieldsMap[k as SortField],
+									value: k
+								}))}
+								style={{ width: '100%' }}
+							/>
+						</Col>
+						<Col span={6}>
+							<SortDirectionChangeButton
+								isAscending={sortMethod.isAscending}
+								onDirectionChange={onSortDirectionChanged}
+							/>
+						</Col>
+					</Row>
+				</div>
+
+				<Divider style={{ margin: '16px 0' }} />
+
+				<div>
+					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
+						Genre
+					</Title>
 					<FilterSelect
-						placeholder="Sort by..."
-						defaultValue={"title"}
-						onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value as SortField })}
-						options={Object.keys(sortByFieldsMap).map((k) => ({
-							label: sortByFieldsMap[k],
-							value: k
-						}))}
+						mode="multiple"
+						style={{ width: "100%" }}
+						placeholder="Select genres..."
+						defaultValue={undefined}
+						checkboxMaxCount={50}
+						onChange={(value) => onSomeFilterChanged({
+							...currentFilter,
+							genre: value as string[],
+							platform: currentFilter?.platform || [],
+							publisher: currentFilter?.publisher || [],
+							developer: currentFilter?.developer || [],
+							release_date: currentFilter?.release_date || null
+						})}
+						options={possibleValues.genre.map((g) => ({ label: g, value: g }))}
 					/>
-				</Col>
+				</div>
 
-				<Col style={{ textAlign: "right" }} span={3}>
-					<SortDirectionChangeButton
-						isAscending={sortMethod.isAscending}
-						onDirectionChange={onSortDirectionChanged}
+				<div>
+					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
+						Platform
+					</Title>
+					<FilterSelect
+						mode="multiple"
+						style={{ width: "100%" }}
+						placeholder="Select platforms..."
+						defaultValue={undefined}
+						checkboxMaxCount={50}
+						onChange={(value) => onSomeFilterChanged({
+							...currentFilter,
+							platform: value as string[],
+							genre: currentFilter?.genre || [],
+							publisher: currentFilter?.publisher || [],
+							developer: currentFilter?.developer || [],
+							release_date: currentFilter?.release_date || null
+						})}
+						options={possibleValues.platform.map((g) => ({ label: g, value: g }))}
 					/>
-				</Col>
-			</Row>
-
-			{/* <Title level={2}>Filter</Title> */}
-
-			<Title level={3}>Genre</Title>
-			<FilterSelect
-				mode="multiple"
-				style={{ width: "100%" }}
-				placeholder="Select genres..."
-				onChange={(value) => onSomeFilterChanged({ ...currentFilter, genre: value })}
-				options={possibleValues.genre.map((g) => ({ label: g, value: g }))}
-			/>
-
-			<Title level={3}>Platform</Title>
-			<FilterSelect
-				mode="multiple"
-				style={{ width: "100%" }}
-				placeholder="Select platforms..."
-				onChange={(value) => onSomeFilterChanged({ ...currentFilter, platform: value })}
-				options={possibleValues.platform.map((g) => ({ label: g, value: g }))}
-			/>
-		</>
+				</div>
+			</Space>
+		</Card>
 	);
 }

@@ -11,6 +11,7 @@ import {
 } from "../api/games";
 import { ListOfGames } from "./ListOfGames";
 import Filters from "./Filters";
+import { LoadingErrorDisplay } from "./ErrorDisplay";
 
 export type Primitive = number | string | boolean;
 
@@ -25,6 +26,7 @@ export function GamesListScreen() {
 	const [isLoading, setLoading] = useState(true);
 	const [games, setGames] = useState<GameInfo[]>([]);
 	const [error, setError] = useState<Error | undefined>();
+	const [filterError, setFilterError] = useState<Error | undefined>();
 
 	const [sortMethod, setSortMethod] = useState<SortMethod>({
 		field: "title",
@@ -76,17 +78,29 @@ export function GamesListScreen() {
 		return field2 < field1 ? 1 : -1;
 	};
 
-	useEffect(() => {
+	const loadGamesData = () => {
+		setLoading(true);
+		setError(undefined);
 		getGamesList()
 			.then(
 				(games: GameInfo[]) => setGames(games),
 				(error: Error) => setError(error)
 			)
 			.finally(() => setLoading(false));
+	};
 
-		getFieldsPossibleValues().then((filterValues: GameFieldsPossibleValues) =>
-			setFilterAvailableValues(filterValues)
-		);
+	const loadFilterData = () => {
+		setFilterError(undefined);
+		getFieldsPossibleValues()
+			.then(
+				(filterValues: GameFieldsPossibleValues) => setFilterAvailableValues(filterValues),
+				(error: Error) => setFilterError(error)
+			);
+	};
+
+	useEffect(() => {
+		loadGamesData();
+		loadFilterData();
 	}, []);
 
 	const {
@@ -96,26 +110,32 @@ export function GamesListScreen() {
 	const filteredGames = games.filter(filterGame).sort(sortGames);
 
 	return (
-		<Content style={{ padding: "0 50px", backgroundColor: colorBgContainer }}>
-			<Row gutter={16}>
-				<Col lg={6}>
-					<Filters
-						currentFilter={filteredFields}
-						sortMethod={sortMethod}
-						possibleValues={filterAvailableValues}
-						onSortMethodChanged={(sortMethod: SortMethod) => setSortMethod(sortMethod)}
-						onSomeFilterChanged={(newFilter: GameFieldsPossibleValues) =>
-							setFilteredFields(newFilter)
-						}
-					/>
+		<Content style={{ padding: "24px 50px", backgroundColor: colorBgContainer }}>
+			<Row gutter={24}>
+				<Col lg={5} xl={4}>
+					<div style={{ marginTop: 16 }}>
+						{filterError && (
+							<LoadingErrorDisplay error={filterError} onRetry={loadFilterData} />
+						)}
+						<Filters
+							currentFilter={filteredFields}
+							sortMethod={sortMethod}
+							possibleValues={filterAvailableValues}
+							onSortMethodChanged={(sortMethod: SortMethod) => setSortMethod(sortMethod)}
+							onSomeFilterChanged={(newFilter: GameFieldsPossibleValues) =>
+								setFilteredFields(newFilter)
+							}
+						/>
+					</div>
 				</Col>
-				<Col lg={{ span: 17, offset: 1 }}>
+				<Col lg={{ span: 16, offset: 1 }} xl={{ span: 17, offset: 1 }} xxl={{ span: 15, offset: 2 }}>
 					<Title level={1}>Free to Game ({filteredGames.length} games)</Title>
 
 					<ListOfGames
 						isLoading={isLoading}
 						error={error}
 						games={filteredGames}
+						onRetry={loadGamesData}
 					/>
 				</Col>
 			</Row>

@@ -1,38 +1,46 @@
-import { useLoaderData } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { GameInfo, getGameInfo } from "../api/games";
+import { useLoaderData, LoaderFunctionArgs } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { DetailedGameInfo, getGameInfo } from "../api/games";
 import { DetailedGameCard, DetailedGameCardSkeleton } from "../components/DetailedGameCard";
+import { GameNotFoundDisplay, GenericErrorDisplay } from "../components/ErrorDisplay";
 
-function gameInfoLoader({ params }) {
-	return params.gameId;
+function gameInfoLoader({ params }: LoaderFunctionArgs) {
+	return params.gameId || "";
 }
 
 export function GameCardPage() {
-	const gameId: number = useLoaderData();
+	const gameId = useLoaderData() as string;
+	const gameIdNumber = parseInt(gameId, 10);
 
-	const [game, setGame] = useState<GameInfo>();
+	const [game, setGame] = useState<DetailedGameInfo | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<Error>();
 
-	useEffect(() => {
-		getGameInfo(gameId)
+	const loadGameData = useCallback(() => {
+		setLoading(true);
+		setError(undefined);
+		getGameInfo(gameIdNumber)
 			.then(
-				(res: GameInfo) => setGame(res),
+				(res: DetailedGameInfo | null) => setGame(res),
 				(error: Error) => setError(error)
 			)
 			.finally(() => setLoading(false));
-	}, [gameId]);
+	}, [gameIdNumber]);
+
+	useEffect(() => {
+		loadGameData();
+	}, [loadGameData]);
 
 	if (loading) {
 		return <DetailedGameCardSkeleton/>
 	}
 
 	if (error) {
-		return `Error occured: ${error}`;
+		return <GenericErrorDisplay error={error} onRetry={loadGameData} title="Failed to Load Game Details" />;
 	}
 
 	if (!game) {
-		return "Game not found!";
+		return <GameNotFoundDisplay />;
 	}
 
 	return <DetailedGameCard {...game} />;
