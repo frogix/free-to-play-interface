@@ -93,6 +93,8 @@ export function GamesListScreen() {
 		token: { colorBgContainer }
 	} = theme.useToken();
 
+	const filteredGames = games.filter(filterGame).sort(sortGames);
+
 	return (
 		<Content style={{ padding: "0 50px", backgroundColor: colorBgContainer }}>
 			<Row gutter={16}>
@@ -108,12 +110,12 @@ export function GamesListScreen() {
 					/>
 				</Col>
 				<Col lg={{ span: 17, offset: 1 }}>
-					<Title level={1}>Free to Game</Title>
+					<Title level={1}>Free to Game ({filteredGames.length} games)</Title>
 
 					<ListOfGames
 						isLoading={isLoading}
 						error={error}
-						games={games.filter(filterGame).sort(sortGames)}
+						games={filteredGames}
 					/>
 				</Col>
 			</Row>

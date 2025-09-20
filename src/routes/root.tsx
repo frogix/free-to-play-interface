@@ -20,7 +20,9 @@ export function Root() {
 				</Header>
 			</Layout>
 
-			<Outlet />
+			<main>
+				<Outlet />
+			</main>
 
 			<Layout>
 				<Footer style={{ textAlign: "center" }}>Created by frogix in 2023.</Footer>

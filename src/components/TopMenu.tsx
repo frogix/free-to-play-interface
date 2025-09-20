@@ -5,18 +5,27 @@ import { Link, useLocation } from "react-router-dom";
 export function TopMenu() {
 	const location = useLocation();
 
-	return (
-		<Menu selectable={false} theme="dark" mode="horizontal">
-			{location.pathname !== "/" && (
-				<Menu.Item key="0">
+	const items = [
+		{
+			key: "1",
+			label: <Link to="/">Free to play games</Link>,
+		}
+	]
+
+	if (location.pathname !== "/") {
+		items.unshift(
+			{
+				key: "0",
+				label: (
 					<Link to="/">
 						<LeftOutlined />
 					</Link>
-				</Menu.Item>
-			)}
-			<Menu.Item key="1">
-				<Link to="/">Free to play games</Link>
-			</Menu.Item>
-		</Menu>
+				),
+			},
+		);
+	}
+
+	return (
+		<Menu selectable={false} theme="dark" mode="horizontal" items={items} />
 	);
 }

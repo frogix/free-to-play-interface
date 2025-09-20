@@ -46,7 +46,7 @@ export default function Filters({
 
 	return (
 		<>
-			<Title level={2}>Sort</Title>
+			<Title level={3}>Sort by</Title>
 			<Row>
 				<Col span={21}>
 					<FilterSelect
@@ -68,7 +68,7 @@ export default function Filters({
 				</Col>
 			</Row>
 
-			<Title level={2}>Filter</Title>
+			{/* <Title level={2}>Filter</Title> */}
 
 			<Title level={3}>Genre</Title>
 			<FilterSelect
