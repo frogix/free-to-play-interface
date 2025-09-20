@@ -70,7 +70,9 @@ export type GameFieldsPossibleValues = {
 const BASE_URL = "http://localhost:1337";
 
 export const getFieldsPossibleValues = (): Promise<GameFieldsPossibleValues> => {
-	return fetch(BASE_URL + "/filtering-options").then((response) => response.json());
+	return fetch(BASE_URL + "/filtering-options")
+		.then(response => response.json())
+		.catch((err) => console.error("An error has occured during the retrieval of game fields possible options", err));
 };
 
 /**
@@ -114,9 +116,9 @@ const splitPlatform = (platformString: string) => {
 };
 
 const handleError = (error: Error) => {
-	console.error(error)
+	console.error(error);
 	return null;
-}
+};
 
 export const getGameInfo = (gameId: number): Promise<DetailedGameInfo | null> => {
 	return fetch(BASE_URL + "/game?id=" + gameId)
