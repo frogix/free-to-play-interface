@@ -29,8 +29,12 @@ function gameInfoToDescriptionItems(info: GameInfo) {
 	return items;
 }
 
-function minRequirementsToDescItems(reqs: SystemRequirements) {
+function minRequirementsToDescItems(reqs: SystemRequirements | undefined) {
 	const items: DescriptionsProps["items"] = [];
+
+	if (!reqs) {
+		return items;
+	}
 
 	if (reqs.os) {
 		items.push({ key: "os", label: "OS", children: reqs.os });
