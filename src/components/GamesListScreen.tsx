@@ -115,7 +115,7 @@ export function GamesListScreen() {
 				<Col lg={5} xl={4}>
 					<div style={{ marginTop: 16 }}>
 						{filterError && (
-							<LoadingErrorDisplay error={filterError} onRetry={loadFilterData} />
+							<LoadingErrorDisplay error={filterError} />
 						)}
 						<Filters
 							currentFilter={filteredFields}
@@ -129,7 +129,14 @@ export function GamesListScreen() {
 					</div>
 				</Col>
 				<Col lg={{ span: 16, offset: 1 }} xl={{ span: 17, offset: 1 }} xxl={{ span: 15, offset: 2 }}>
-					<Title level={1}>Free to Game ({filteredGames.length} games)</Title>
+					<Title level={1}>
+						{
+							filteredGames.length > 0
+								? `Free to Game ${filteredGames.length} games`
+								: `Free to Game`
+						}
+
+					</Title>
 
 					<ListOfGames
 						isLoading={isLoading}
