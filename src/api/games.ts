@@ -67,7 +67,7 @@ export type GameFieldsPossibleValues = {
 	release_date: TimeSpan | null;
 };
 
-const BASE_URL = "http://localhost:1337";
+const BASE_URL = "http://95.182.99.90:1337/api";
 
 export const getFieldsPossibleValues = (): Promise<GameFieldsPossibleValues> => {
 	return fetch(BASE_URL + "/filtering-options")

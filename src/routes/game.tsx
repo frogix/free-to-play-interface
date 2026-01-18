@@ -1,7 +1,8 @@
 import { useLoaderData, LoaderFunctionArgs } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { DetailedGameInfo, getGameInfo } from "../api/games";
-import { DetailedGameCard, DetailedGameCardSkeleton } from "../components/DetailedGameCard";
+import { DetailedGameCard } from "../components/DetailedGameCard";
+import { DetailedGameCardSkeleton } from "../components/DetailedGameCardSkeleton";
 import { GameNotFoundDisplay, GenericErrorDisplay } from "../components/ErrorDisplay";
 
 function gameInfoLoader({ params }: LoaderFunctionArgs) {
@@ -32,7 +33,7 @@ export function GameCardPage() {
 	}, [loadGameData]);
 
 	if (loading) {
-		return <DetailedGameCardSkeleton/>
+		return <DetailedGameCardSkeleton />
 	}
 
 	if (error) {
