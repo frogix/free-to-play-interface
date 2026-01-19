@@ -3,6 +3,6 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	base: "./", // use relative path
+	base: "/free-to-play-interface/",
 	plugins: [react()],
 })
