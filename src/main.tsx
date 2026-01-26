@@ -1,11 +1,12 @@
-import {StrictMode} from "react";
+import {StrictMode, Suspense, lazy} from "react";
 import ReactDOM from "react-dom/client";
 import {RouterProvider, createBrowserRouter} from "react-router-dom";
 
 import "./index.css";
 import {Root} from "./routes/root.tsx";
 import {GameCardPage} from "./routes/game.tsx";
-import {GamesListScreen} from "./components/GamesListScreen.tsx";
+
+const GamesListScreen = lazy(() => import("./components/GamesListScreen.tsx"));
 
 const router = createBrowserRouter(
 	[
@@ -15,7 +16,11 @@ const router = createBrowserRouter(
 			children: [
 				{
 					index: true,
-					element: <GamesListScreen />
+					element: (
+						<Suspense fallback={<div>Loading...</div>}>
+							<GamesListScreen />
+						</Suspense>
+					)
 				},
 				{
 					path: "game/:gameId",

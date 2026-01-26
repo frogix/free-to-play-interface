@@ -146,3 +146,6 @@ export function GamesListScreen() {
 		</Content>
 	);
 }
+
+// Default export for lazy loading
+export default GamesListScreen;
