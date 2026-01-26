@@ -25,7 +25,7 @@ export function Root() {
 			</main>
 
 			<Layout>
-				<Footer style={{ textAlign: "center" }}>Created by frogix in 2023.</Footer>
+				<Footer style={{ textAlign: "center" }}>Created by frogix in 2025.</Footer>
 			</Layout>
 		</ConfigProvider>
 	);
