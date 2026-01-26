@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {StrictMode, Suspense, lazy} from "react";
 import ReactDOM from "react-dom/client";
 import {RouterProvider, createBrowserRouter} from "react-router-dom";
