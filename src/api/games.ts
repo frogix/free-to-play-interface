@@ -67,7 +67,7 @@ export type GameFieldsPossibleValues = {
 	release_date: TimeSpan | null;
 };
 
-const BASE_URL = "http://frogix-dev.ru/api";
+const BASE_URL = "https://frogix-dev.ru/api";
 
 export const getFieldsPossibleValues = (): Promise<GameFieldsPossibleValues> => {
 	return fetch(BASE_URL + "/filtering-options")
