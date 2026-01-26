@@ -1,9 +1,10 @@
 import { useLoaderData, LoaderFunctionArgs } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense, lazy } from "react";
 import { DetailedGameInfo, getGameInfo } from "../api/games";
-import { DetailedGameCard } from "../components/DetailedGameCard";
 import { DetailedGameCardSkeleton } from "../components/DetailedGameCardSkeleton";
 import { GameNotFoundDisplay, GenericErrorDisplay } from "../components/ErrorDisplay";
+
+const DetailedGameCard = lazy(() => import("../components/DetailedGameCard"));
 
 function gameInfoLoader({ params }: LoaderFunctionArgs) {
 	return params.gameId || "";
@@ -44,7 +45,11 @@ export function GameCardPage() {
 		return <GameNotFoundDisplay />;
 	}
 
-	return <DetailedGameCard {...game} />;
+	return (
+		<Suspense fallback={<DetailedGameCardSkeleton />}>
+			<DetailedGameCard {...game} />
+		</Suspense>
+	);
 }
 
 GameCardPage.loader = gameInfoLoader;

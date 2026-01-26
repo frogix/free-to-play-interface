@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Col, Row, theme } from "antd";
+import Col from "antd/es/col";
+import Row from "antd/es/row";
 import Title from "antd/es/typography/Title";
 import { Content } from "antd/es/layout/layout";
 
@@ -103,14 +104,10 @@ export function GamesListScreen() {
 		loadFilterData();
 	}, []);
 
-	const {
-		token: { colorBgContainer }
-	} = theme.useToken();
-
 	const filteredGames = games.filter(filterGame).sort(sortGames);
 
 	return (
-		<Content style={{ padding: "24px 50px", backgroundColor: colorBgContainer }}>
+		<Content style={{ padding: "24px 50px" }}>
 			<Row gutter={24}>
 				<Col lg={5} xl={4}>
 					<div style={{ marginTop: 16 }}>

@@ -1,4 +1,10 @@
-import { Descriptions, DescriptionsProps, Image, Skeleton, Tag, Card, Space } from "antd";
+import Descriptions from "antd/es/descriptions";
+import type { DescriptionsProps } from "antd/es/descriptions";
+import Image from "antd/es/image";
+import Skeleton from "antd/es/skeleton";
+import Tag from "antd/es/tag";
+import Card from "antd/es/card";
+import Space from "antd/es/space";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
 import { Blurhash } from "react-blurhash";

@@ -1,4 +1,8 @@
-import { Alert, Button, Card, Result, Space } from "antd";
+import Alert from "antd/es/alert";
+import Button from "antd/es/button";
+import Card from "antd/es/card";
+import Result from "antd/es/result";
+import Space from "antd/es/space";
 import { ExclamationCircleOutlined, ReloadOutlined, WifiOutlined } from "@ant-design/icons";
 
 interface ErrorDisplayProps {

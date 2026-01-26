@@ -1,5 +1,8 @@
-import { Col, Row, Skeleton, Card } from "antd";
-import { DetailedGameCardLayoutWrapper } from "./DetailedGameCard";
+import Col from "antd/es/col";
+import Row from "antd/es/row";
+import Skeleton from "antd/es/skeleton";
+import Card from "antd/es/card";
+import { DetailedGameCardLayoutWrapper } from "./DetailedGameCardLayoutWrapper";
 
 export function DetailedGameCardSkeleton() {
 	return (

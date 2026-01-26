@@ -1,4 +1,5 @@
-import { ConfigProvider, Layout } from "antd";
+import ConfigProvider from "antd/es/config-provider";
+import Layout from "antd/es/layout";
 import { Footer, Header } from "antd/es/layout/layout";
 import { Outlet } from "react-router-dom";
 import { TopMenu } from "../components/TopMenu";

@@ -1,5 +1,10 @@
 import Title from "antd/es/typography/Title";
-import { Button, Col, Row, Card, Space, Divider } from "antd";
+import Button from "antd/es/button";
+import Col from "antd/es/col";
+import Row from "antd/es/row";
+import Card from "antd/es/card";
+import Space from "antd/es/space";
+import Divider from "antd/es/divider";
 import { MouseEventHandler } from "react";
 import { SortAscendingOutlined, SortDescendingOutlined, FilterOutlined } from "@ant-design/icons";
 

@@ -1,9 +1,17 @@
-import { Carousel, Col, Descriptions, DescriptionsProps, Image, Row, Tag, Card, Space } from "antd";
+import Carousel from "antd/es/carousel";
+import Col from "antd/es/col";
+import Descriptions from "antd/es/descriptions";
+import type { DescriptionsProps } from "antd/es/descriptions";
+import Image from "antd/es/image";
+import Row from "antd/es/row";
+import Tag from "antd/es/tag";
+import Card from "antd/es/card";
+import Space from "antd/es/space";
 import { DetailedGameInfo, GameInfo, SystemRequirements } from "../api/games";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
 import { Blurhash } from "react-blurhash";
-import { ReactNode } from "react";
+import { DetailedGameCardLayoutWrapper } from "./DetailedGameCardLayoutWrapper";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU");
 
@@ -57,14 +65,6 @@ function minRequirementsToDescItems(reqs: SystemRequirements | undefined) {
 	}
 
 	return items;
-}
-
-export function DetailedGameCardLayoutWrapper({ children }: { children: ReactNode }) {
-	return (
-		<div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-			{children}
-		</div>
-	);
 }
 
 export function DetailedGameCard(game: DetailedGameInfo) {
@@ -246,3 +246,6 @@ export function DetailedGameCard(game: DetailedGameInfo) {
 		</DetailedGameCardLayoutWrapper>
 	);
 }
+
+// Default export for lazy loading
+export default DetailedGameCard;

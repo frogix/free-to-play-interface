@@ -1,4 +1,5 @@
-import { Pagination, PaginationProps } from "antd";
+import Pagination from "antd/es/pagination";
+import type { PaginationProps } from "antd/es/pagination";
 import { GameInfo } from "../api/games";
 import { GameCard, GameCardSkeleton } from "./GameCard";
 import { NetworkErrorDisplay, GenericErrorDisplay } from "./ErrorDisplay";

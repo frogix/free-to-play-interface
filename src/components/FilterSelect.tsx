@@ -1,5 +1,7 @@
 import Select from "antd/es/select";
-import { Checkbox, Radio, RadioChangeEvent } from "antd";
+import Checkbox from "antd/es/checkbox";
+import Radio from "antd/es/radio";
+import type { RadioChangeEvent } from "antd/es/radio";
 import { ReactNode } from "react";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 
