@@ -67,6 +67,50 @@ export default function Filters({
 			<Space direction="vertical" size="middle" style={{ width: '100%' }}>
 				<div>
 					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
+						Genre
+					</Title>
+					<FilterSelect
+						mode="multiple"
+						style={{ width: "100%" }}
+						placeholder="Select genres..."
+						defaultValue={undefined}
+						onChange={(value) => onSomeFilterChanged({
+							...currentFilter,
+							genre: value as string[],
+							platform: currentFilter?.platform || [],
+							publisher: currentFilter?.publisher || [],
+							developer: currentFilter?.developer || [],
+							release_date: currentFilter?.release_date || null
+						})}
+						options={possibleValues.genre.map((g) => ({ label: g, value: g }))}
+					/>
+				</div>
+
+				<div>
+					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
+						Platform
+					</Title>
+					<FilterSelect
+						mode="multiple"
+						style={{ width: "100%" }}
+						placeholder="Select platforms..."
+						defaultValue={undefined}
+						onChange={(value) => onSomeFilterChanged({
+							...currentFilter,
+							platform: value as string[],
+							genre: currentFilter?.genre || [],
+							publisher: currentFilter?.publisher || [],
+							developer: currentFilter?.developer || [],
+							release_date: currentFilter?.release_date || null
+						})}
+						options={possibleValues.platform.map((g) => ({ label: g, value: g }))}
+					/>
+				</div>
+
+				<Divider style={{ margin: '0px 0' }} />
+
+				<div>
+					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
 						Sort by
 					</Title>
 					<Row gutter={8}>
@@ -91,51 +135,6 @@ export default function Filters({
 					</Row>
 				</div>
 
-				<Divider style={{ margin: '16px 0' }} />
-
-				<div>
-					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
-						Genre
-					</Title>
-					<FilterSelect
-						mode="multiple"
-						style={{ width: "100%" }}
-						placeholder="Select genres..."
-						defaultValue={undefined}
-						checkboxMaxCount={50}
-						onChange={(value) => onSomeFilterChanged({
-							...currentFilter,
-							genre: value as string[],
-							platform: currentFilter?.platform || [],
-							publisher: currentFilter?.publisher || [],
-							developer: currentFilter?.developer || [],
-							release_date: currentFilter?.release_date || null
-						})}
-						options={possibleValues.genre.map((g) => ({ label: g, value: g }))}
-					/>
-				</div>
-
-				<div>
-					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
-						Platform
-					</Title>
-					<FilterSelect
-						mode="multiple"
-						style={{ width: "100%" }}
-						placeholder="Select platforms..."
-						defaultValue={undefined}
-						checkboxMaxCount={50}
-						onChange={(value) => onSomeFilterChanged({
-							...currentFilter,
-							platform: value as string[],
-							genre: currentFilter?.genre || [],
-							publisher: currentFilter?.publisher || [],
-							developer: currentFilter?.developer || [],
-							release_date: currentFilter?.release_date || null
-						})}
-						options={possibleValues.platform.map((g) => ({ label: g, value: g }))}
-					/>
-				</div>
 			</Space>
 		</Card>
 	);
