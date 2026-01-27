@@ -26,8 +26,6 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 		setCurrentPage(1);
 	}
 
-	console.log(currentPage);
-
 	if (isLoading) {
 		return (
 			<div
