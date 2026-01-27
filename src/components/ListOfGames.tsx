@@ -22,6 +22,12 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}
 
+	if ((currentPage - 1) * currentPageSize > games.length) {
+		setCurrentPage(1);
+	}
+
+	console.log(currentPage);
+
 	if (isLoading) {
 		return (
 			<div
@@ -63,7 +69,7 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 			</div>
 
 			<Pagination
-				// current={games.length < currentPageSize * currentPage ? 1 : currentPage}
+				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={currentPageSize}
 				style={{ marginBottom: 30, textAlign: "center" }}
