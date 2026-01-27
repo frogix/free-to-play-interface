@@ -16,14 +16,14 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageSize, setCurrentPageSize] = useState(10);
 
-	const firstGameRef = useRef<HTMLElement>(null);
+	const gameListStartDiv = useRef<HTMLDivElement | null>(null);
 
 	const gamesOnPage = games.slice(currentPageSize * (currentPage - 1), currentPageSize * currentPage);
 
 	const onPageChanged: PaginationProps['onChange'] = (page, pageSize) => {
 		setCurrentPage(page);
 		setCurrentPageSize(pageSize);
-		firstGameRef.current?.scrollIntoView({ behavior: "smooth" });
+		gameListStartDiv.current?.scrollIntoView({ behavior: "smooth" });
 		// window.scrollTo({ top: 0, behavior: "smooth" });
 	}
 
@@ -59,7 +59,7 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 	return (
 		<>
 			<div
-				ref={firstGameRef}
+				ref={gameListStartDiv}
 				style={{
 					display: 'grid',
 					gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
