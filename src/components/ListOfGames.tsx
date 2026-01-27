@@ -3,7 +3,7 @@ import type { PaginationProps } from "antd/es/pagination";
 import { GameInfo } from "../api/games";
 import { GameCard, GameCardSkeleton } from "./GameCard";
 import { NetworkErrorDisplay, GenericErrorDisplay } from "./ErrorDisplay";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface ListOfGamesProps {
 	games: GameInfo[];
@@ -16,10 +16,15 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageSize, setCurrentPageSize] = useState(10);
 
+	const firstGameRef = useRef<HTMLElement>(null);
+
+	const gamesOnPage = games.slice(currentPageSize * (currentPage - 1), currentPageSize * currentPage);
+
 	const onPageChanged: PaginationProps['onChange'] = (page, pageSize) => {
 		setCurrentPage(page);
 		setCurrentPageSize(pageSize);
-		window.scrollTo({ top: 0, behavior: "smooth" });
+		firstGameRef.current?.scrollIntoView({ behavior: "smooth" });
+		// window.scrollTo({ top: 0, behavior: "smooth" });
 	}
 
 	if ((currentPage - 1) * currentPageSize > games.length) {
@@ -54,6 +59,7 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 	return (
 		<>
 			<div
+				ref={firstGameRef}
 				style={{
 					display: 'grid',
 					gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -61,8 +67,9 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 					marginBottom: '24px'
 				}}
 			>
-				{games.slice(currentPageSize * (currentPage - 1), currentPageSize * currentPage).map((game) => (
+				{gamesOnPage.map(game => (
 					<GameCard key={game.id} {...game} />
+
 				))}
 			</div>
 

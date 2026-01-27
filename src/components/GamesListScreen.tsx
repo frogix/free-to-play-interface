@@ -11,7 +11,7 @@ import {
 	getGamesList
 } from "../api/games";
 import { ListOfGames } from "./ListOfGames";
-import Filters from "./Filters";
+import GameFilters from "./GameFilters";
 import { LoadingErrorDisplay } from "./ErrorDisplay";
 
 export type Primitive = number | string | boolean;
@@ -114,7 +114,7 @@ export function GamesListScreen() {
 						{filterError && (
 							<LoadingErrorDisplay error={filterError} />
 						)}
-						<Filters
+						<GameFilters
 							currentFilter={filteredFields}
 							sortMethod={sortMethod}
 							possibleValues={filterAvailableValues}

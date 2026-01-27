@@ -1,16 +1,15 @@
 import Title from "antd/es/typography/Title";
-import Button from "antd/es/button";
 import Col from "antd/es/col";
 import Row from "antd/es/row";
 import Card from "antd/es/card";
 import Space from "antd/es/space";
 import Divider from "antd/es/divider";
-import { MouseEventHandler } from "react";
-import { SortAscendingOutlined, SortDescendingOutlined, FilterOutlined } from "@ant-design/icons";
+import { FilterOutlined } from "@ant-design/icons";
 
 import FilterSelect from "./FilterSelect";
 import { GameFieldsPossibleValues } from "../api/games";
 import { SortField, SortMethod } from "./GamesListScreen";
+import SortDirectionChangeButton from "./SortDirectionChangeButton";
 
 interface FiltersProps {
 	sortMethod: SortMethod;
@@ -20,18 +19,7 @@ interface FiltersProps {
 	onSortMethodChanged: (newSortMethod: SortMethod) => void;
 }
 
-function SortDirectionChangeButton({
-	isAscending,
-	onDirectionChange
-}: {
-	isAscending: boolean;
-	onDirectionChange: MouseEventHandler;
-}) {
-	const icon = isAscending ? <SortAscendingOutlined /> : <SortDescendingOutlined />;
-	return <Button icon={icon} shape="circle" onClick={onDirectionChange} />;
-}
-
-export default function Filters({
+export default function GameFilters({
 	sortMethod,
 	possibleValues,
 	onSomeFilterChanged,
