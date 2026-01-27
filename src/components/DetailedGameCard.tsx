@@ -60,7 +60,7 @@ function minRequirementsToDescItems(reqs: SystemRequirements | undefined) {
 		items.push({ key: "graphics", label: "Graphics", children: reqs.graphics });
 	}
 
-	if (reqs.storage) {
+	if (reqs.storage && reqs.storage !== "?") {
 		items.push({ key: "storage", label: "Storage", children: reqs.storage });
 	}
 
