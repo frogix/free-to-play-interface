@@ -1,6 +1,7 @@
 import { LeftOutlined } from "@ant-design/icons";
 import Menu from "antd/es/menu";
 import { Link, useLocation } from "react-router-dom";
+import "./TopMenu.css";
 
 
 export function TopMenu() {

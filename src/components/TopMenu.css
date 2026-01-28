@@ -1,0 +1,10 @@
+.ant-menu-horizontal .ant-menu-item {
+  display: flex;
+  align-items: stretch;
+}
+
+.ant-menu-horizontal .ant-menu-item a {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
