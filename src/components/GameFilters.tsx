@@ -13,7 +13,7 @@ import SortDirectionChangeButton from "./SortDirectionChangeButton";
 
 interface FiltersProps {
 	sortMethod: SortMethod;
-	possibleValues: GameFieldsPossibleValues | null;
+	possibleValues: GameFieldsPossibleValues | null | undefined;
 	currentFilter: GameFieldsPossibleValues | undefined;
 	onSomeFilterChanged: (newFilterValues: GameFieldsPossibleValues) => void;
 	onSortMethodChanged: (newSortMethod: SortMethod) => void;

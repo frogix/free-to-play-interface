@@ -1,6 +1,8 @@
 import { useLoaderData, LoaderFunctionArgs } from "react-router-dom";
-import { useEffect, useState, useCallback, Suspense, lazy } from "react";
-import { DetailedGameInfo, getGameInfo } from "../api/games";
+import { Suspense, lazy } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import { getGameInfo } from "../api/games";
 import { DetailedGameCardSkeleton } from "../components/DetailedGameCardSkeleton";
 import { GameNotFoundDisplay, GenericErrorDisplay } from "../components/ErrorDisplay";
 
@@ -14,26 +16,19 @@ export function GameCardPage() {
 	const gameId = useLoaderData() as string;
 	const gameIdNumber = parseInt(gameId, 10);
 
-	const [game, setGame] = useState<DetailedGameInfo | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<Error>();
+	const {
+		data: game,
+		isLoading,
+		error,
+		refetch: loadGameData,
+		isFetching,
+	} = useQuery({
+		queryKey: ["game", gameIdNumber],
+		queryFn: ({ signal }) => getGameInfo(gameIdNumber, signal)
+	});
 
-	const loadGameData = useCallback(() => {
-		setLoading(true);
-		setError(undefined);
-		getGameInfo(gameIdNumber)
-			.then(
-				(res: DetailedGameInfo | null) => setGame(res),
-				(error: Error) => setError(error)
-			)
-			.finally(() => setLoading(false));
-	}, [gameIdNumber]);
 
-	useEffect(() => {
-		loadGameData();
-	}, [loadGameData]);
-
-	if (loading) {
+	if (isLoading || isFetching) {
 		return <DetailedGameCardSkeleton />
 	}
 

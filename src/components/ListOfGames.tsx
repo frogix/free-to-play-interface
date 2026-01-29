@@ -8,7 +8,7 @@ import { useRef, useState } from "react";
 interface ListOfGamesProps {
 	games: GameInfo[];
 	isLoading: boolean;
-	error: Error | undefined;
+	error?: Error | null;
 	onRetry?: () => void;
 }
 
@@ -24,7 +24,6 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 		setCurrentPage(page);
 		setCurrentPageSize(pageSize);
 		gameListStartDiv.current?.scrollIntoView({ behavior: "smooth" });
-		// window.scrollTo({ top: 0, behavior: "smooth" });
 	}
 
 	if ((currentPage - 1) * currentPageSize > games.length) {

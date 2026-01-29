@@ -69,8 +69,8 @@ export type GameFieldsPossibleValues = {
 
 const BASE_URL = "https://frogix-dev.ru/api";
 
-export const getFieldsPossibleValues = (): Promise<GameFieldsPossibleValues> => {
-	return fetch(BASE_URL + "/filtering-options")
+export const getFieldsPossibleValues = (abortSignal: AbortSignal): Promise<GameFieldsPossibleValues> => {
+	return fetch(BASE_URL + "/filtering-options", { signal: abortSignal })
 		.then(response => {
 			if (!response.ok) {
 				throw new Error(`HTTP ${response.status}: Failed to fetch filter options`);
@@ -111,8 +111,8 @@ const parseGameObject = (gameObject: UnparsedGameInfo): DetailedGameInfo => {
 	return parsedObject as DetailedGameInfo;
 };
 
-export const getGamesList = (): Promise<GameInfo[]> => {
-	return fetch(BASE_URL + "/games")
+export const getGamesList = (abortSignal: AbortSignal): Promise<GameInfo[]> => {
+	return fetch(BASE_URL + "/games", { signal: abortSignal })
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error(`HTTP ${response.status}: Failed to fetch games list`);
@@ -137,8 +137,8 @@ const splitPlatform = (platformString: string) => {
 	return platformString.split(",").map((p) => p.trim());
 };
 
-export const getGameInfo = (gameId: number): Promise<DetailedGameInfo | null> => {
-	return fetch(BASE_URL + "/game?id=" + gameId)
+export const getGameInfo = (gameId: number, abortSignal: AbortSignal): Promise<DetailedGameInfo | null> => {
+	return fetch(BASE_URL + "/game?id=" + gameId, { signal: abortSignal })
 		.then((response) => {
 			if (response.status === 404) {
 				throw new Error("Game not found");

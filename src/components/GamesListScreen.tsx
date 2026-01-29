@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Col from "antd/es/col";
 import Row from "antd/es/row";
 import Title from "antd/es/typography/Title";
 import { Content } from "antd/es/layout/layout";
+import { useQuery } from "@tanstack/react-query";
 
 import {
 	GameFieldsPossibleValues,
@@ -24,18 +25,10 @@ export interface SortMethod {
 }
 
 export function GamesListScreen() {
-	const [isLoading, setLoading] = useState(true);
-	const [games, setGames] = useState<GameInfo[]>([]);
-	const [error, setError] = useState<Error | undefined>();
-	const [filterError, setFilterError] = useState<Error | undefined>();
-
 	const [sortMethod, setSortMethod] = useState<SortMethod>({
 		field: "title",
 		isAscending: true
 	});
-
-	const [filterAvailableValues, setFilterAvailableValues] =
-		useState<GameFieldsPossibleValues | null>(null);
 
 	const [filteredFields, setFilteredFields] = useState<GameFieldsPossibleValues>();
 
@@ -79,30 +72,21 @@ export function GamesListScreen() {
 		return field2 < field1 ? 1 : -1;
 	};
 
-	const loadGamesData = () => {
-		setLoading(true);
-		setError(undefined);
-		getGamesList()
-			.then(
-				(games: GameInfo[]) => setGames(games),
-				(error: Error) => setError(error)
-			)
-			.finally(() => setLoading(false));
-	};
+	const {
+		data: games = [],
+		isLoading,
+		error,
+		refetch: loadGamesData,
+	} = useQuery({
+		queryKey: ["games"],
+		queryFn: ({ signal }) => getGamesList(signal),
+	});
 
-	const loadFilterData = () => {
-		setFilterError(undefined);
-		getFieldsPossibleValues()
-			.then(
-				(filterValues: GameFieldsPossibleValues) => setFilterAvailableValues(filterValues),
-				(error: Error) => setFilterError(error)
-			);
-	};
 
-	useEffect(() => {
-		loadGamesData();
-		loadFilterData();
-	}, []);
+	const { data: filterAvailableValues, error: filterError } = useQuery({
+		queryKey: ["filterOptions"],
+		queryFn: ({ signal }) => getFieldsPossibleValues(signal)
+	});
 
 	const filteredGames = games.filter(filterGame).sort(sortGames);
 
