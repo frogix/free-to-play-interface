@@ -51,7 +51,7 @@ export function Root() {
 				</main>
 
 				<Layout>
-					<Footer style={{ textAlign: "center" }}>Created by frogix in 2025.</Footer>
+					<Footer style={{ textAlign: "center" }}>Created by frogix in 2026.</Footer>
 				</Layout>
 			</ConfigProvider>
 			<ReactQueryDevtools initialIsOpen={false} />
