@@ -1,15 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import {StrictMode, Suspense, lazy} from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import {RouterProvider, createBrowserRouter} from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 
 import "./index.css";
-import {Root} from "./routes/root.tsx";
-import {GameCardPage} from "./routes/game.tsx";
+import { Root } from "./routes/root.tsx";
+import { GameCardPage } from "./routes/game.tsx";
 
 const GamesListScreen = lazy(() => import("./components/GamesListScreen.tsx"));
 
-const router = createBrowserRouter(
+const router = createHashRouter(
 	[
 		{
 			path: "/",
