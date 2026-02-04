@@ -10,8 +10,8 @@ import Space from "antd/es/space";
 import { DetailedGameInfo, GameInfo, SystemRequirements } from "../api/games";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
-import { Blurhash } from "react-blurhash";
 import { DetailedGameCardLayoutWrapper } from "./DetailedGameCardLayoutWrapper";
+import { ImageWithSkeleton } from "./ImageWithSkeleton";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU");
 
@@ -90,7 +90,7 @@ export function DetailedGameCard(game: DetailedGameInfo) {
 								borderRadius: '8px',
 								overflow: 'hidden'
 							}}
-							bodyStyle={{ padding: 0 }}
+							styles={{ body: { padding: 0 } }}
 						>
 							<Image.PreviewGroup preview={{ movable: false }}>
 								<Carousel
@@ -101,14 +101,8 @@ export function DetailedGameCard(game: DetailedGameInfo) {
 								>
 									{game.screenshots.map((s) => (
 										<div key={s.id}>
-											<Image
+											<ImageWithSkeleton
 												src={s.image}
-												style={{
-													width: '100%',
-													height: '350px',
-													objectFit: 'cover',
-													borderRadius: '8px'
-												}}
 											/>
 										</div>
 									))}
@@ -125,27 +119,9 @@ export function DetailedGameCard(game: DetailedGameInfo) {
 								marginBottom: '16px'
 							}}
 						>
-							<Image
+							<ImageWithSkeleton
 								alt={game.title}
-								preview={false}
 								src={game.thumbnail}
-								style={{
-									width: '100%',
-									borderRadius: '8px',
-									marginBottom: '16px'
-								}}
-								placeholder={
-									game.thumbnail_lazy && (
-										<Blurhash
-											hash={game.thumbnail_lazy.hash}
-											width={game.thumbnail_lazy.w}
-											height={game.thumbnail_lazy.h}
-											resolutionX={32}
-											resolutionY={32}
-											punch={1}
-										/>
-									)
-								}
 							/>
 
 							<Paragraph style={{ fontSize: '16px', lineHeight: '1.6', marginBottom: '20px' }}>

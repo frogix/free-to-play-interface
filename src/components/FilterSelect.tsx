@@ -3,7 +3,7 @@ import Checkbox from "antd/es/checkbox";
 import Radio from "antd/es/radio";
 import type { RadioChangeEvent } from "antd/es/radio";
 import { ReactNode } from "react";
-import { CheckboxValueType } from "antd/es/checkbox/Group";
+import { GetProp } from "antd";
 
 
 interface MySmartSelectOption {
@@ -40,7 +40,7 @@ export default function FilterSelect({
 		handleValueChange(e.target.value);
 	};
 
-	const onCheckboxValueChanged = (v: CheckboxValueType[]) => {
+	const onCheckboxValueChanged: GetProp<typeof Checkbox.Group, 'onChange'> = (v) => {
 		handleValueChange(v as string[])
 	};
 
@@ -67,7 +67,7 @@ export default function FilterSelect({
 			<Checkbox.Group
 				style={style || { width: "100%", display: "flex", flexDirection: "column" }}
 				options={options}
-				defaultValue={[defaultValue as CheckboxValueType]}
+				defaultValue={[defaultValue]}
 				onChange={onCheckboxValueChanged}
 			/>
 		);

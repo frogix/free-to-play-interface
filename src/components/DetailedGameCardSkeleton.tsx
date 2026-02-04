@@ -4,6 +4,8 @@ import Skeleton from "antd/es/skeleton";
 import Card from "antd/es/card";
 import { DetailedGameCardLayoutWrapper } from "./DetailedGameCardLayoutWrapper";
 
+import './DetailedGameCardSkeleton.css';
+
 export function DetailedGameCardSkeleton() {
 	return (
 		<DetailedGameCardLayoutWrapper>
@@ -19,13 +21,13 @@ export function DetailedGameCardSkeleton() {
 				<Row gutter={24} style={{ marginTop: '24px' }}>
 					<Col lg={14} xs={24}>
 						<Card style={{ marginBottom: '16px', borderRadius: '8px' }} bodyStyle={{ padding: 0 }}>
-							<Skeleton.Image style={{ width: '100%', height: '350px' }} />
+							<Skeleton.Image className="full-width-skeleton" style={{ width: '100%', height: '350px' }} />
 						</Card>
 					</Col>
 
 					<Col lg={10} xs={24}>
 						<Card style={{ borderRadius: '8px' }}>
-							<Skeleton.Image style={{ width: '100%', height: '200px', marginBottom: '16px' }} />
+							<Skeleton.Image className="full-width-skeleton" style={{ width: '100%', height: '200px', marginBottom: '16px' }} />
 							<Skeleton active paragraph={{ rows: 3 }} title={false} />
 						</Card>
 					</Col>
