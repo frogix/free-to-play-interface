@@ -14,7 +14,7 @@ interface MySmartSelectOption {
 interface MySmartSelectProps {
 	checkboxMaxCount?: number;
 	placeholder: string;
-	defaultValue: string | number | boolean | null | undefined;
+	defaultValue: string | string[] | number | boolean | null | undefined;
 	onChange: (value: string | string[]) => void;
 	options: MySmartSelectOption[];
 	mode?: "multiple" | "tags";
@@ -63,11 +63,12 @@ export default function FilterSelect({
 	}
 
 	if (mode === "multiple") {
+		const checkboxValue = Array.isArray(defaultValue) ? defaultValue : (defaultValue === undefined ? [] : [defaultValue]);
 		return (
 			<Checkbox.Group
 				style={style || { width: "100%", display: "flex", flexDirection: "column" }}
 				options={options}
-				defaultValue={[defaultValue]}
+				defaultValue={checkboxValue}
 				onChange={onCheckboxValueChanged}
 			/>
 		);

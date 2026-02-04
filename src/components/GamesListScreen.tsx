@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Col from "antd/es/col";
 import Row from "antd/es/row";
 import Title from "antd/es/typography/Title";
@@ -11,26 +12,80 @@ import {
 	getFieldsPossibleValues,
 	getGamesList
 } from "../api/games";
+import {
+	parseFiltersFromSearchParams,
+	parseSortFromSearchParams,
+	parsePaginationFromSearchParams,
+	filtersToSearchParams,
+	getSearchStringFromLocation,
+	type SortMethod,
+	type SortField
+} from "../utils/filterSearchParams";
 import { ListOfGames } from "./ListOfGames";
 import GameFilters from "./GameFilters";
 import { LoadingErrorDisplay } from "./ErrorDisplay";
 
 export type Primitive = number | string | boolean;
 
-export type SortField = "title" | "release_date";
+export type { SortField, SortMethod };
 
-export interface SortMethod {
-	field: SortField;
-	isAscending: boolean;
+function getInitialStateFromUrl(): {
+	sortMethod: SortMethod;
+	filteredFields: GameFieldsPossibleValues | undefined;
+	page: number;
+	pageSize: number;
+} {
+	const search = getSearchStringFromLocation();
+	const params = new URLSearchParams(search);
+	return {
+		sortMethod: parseSortFromSearchParams(params),
+		filteredFields: parseFiltersFromSearchParams(params),
+		...parsePaginationFromSearchParams(params)
+	};
 }
 
 export function GamesListScreen() {
-	const [sortMethod, setSortMethod] = useState<SortMethod>({
-		field: "title",
-		isAscending: true
-	});
+	const [searchParams, setSearchParams] = useSearchParams();
+	const [sortMethod, setSortMethod] = useState<SortMethod>(() =>
+		getInitialStateFromUrl().sortMethod
+	);
+	const [filteredFields, setFilteredFields] = useState<GameFieldsPossibleValues | undefined>(
+		() => getInitialStateFromUrl().filteredFields
+	);
+	const [page, setPage] = useState(() => getInitialStateFromUrl().page);
+	const [pageSize, setPageSize] = useState(() => getInitialStateFromUrl().pageSize);
 
-	const [filteredFields, setFilteredFields] = useState<GameFieldsPossibleValues>();
+	useEffect(() => {
+		const nextSort = parseSortFromSearchParams(searchParams);
+		const nextFilters = parseFiltersFromSearchParams(searchParams);
+		const { page: nextPage, pageSize: nextPageSize } = parsePaginationFromSearchParams(searchParams);
+		setSortMethod(nextSort);
+		setFilteredFields(nextFilters);
+		setPage(nextPage);
+		setPageSize(nextPageSize);
+	}, [searchParams]);
+
+	const applyFiltersAndSort = (
+		newFilter: GameFieldsPossibleValues | undefined,
+		newSort: SortMethod
+	) => {
+		setFilteredFields(newFilter);
+		setSortMethod(newSort);
+		setPage(1);
+		setSearchParams(
+			filtersToSearchParams(newFilter, newSort, { page: 1, pageSize }),
+			{ replace: true }
+		);
+	};
+
+	const onPageChange = (newPage: number, newPageSize: number) => {
+		setPage(newPage);
+		setPageSize(newPageSize);
+		setSearchParams(
+			filtersToSearchParams(filteredFields, sortMethod, { page: newPage, pageSize: newPageSize }),
+			{ replace: true }
+		);
+	};
 
 	const checkIfArraysIntercept = (arr1: Primitive[], arr2: Primitive[]) => {
 		if (!arr1 || !arr1.length || !arr2 || !arr2.length) return false;
@@ -89,6 +144,19 @@ export function GamesListScreen() {
 	});
 
 	const filteredGames = games.filter(filterGame).sort(sortGames);
+	const totalItems = filteredGames.length;
+	const maxPage = Math.max(1, Math.ceil(totalItems / pageSize));
+	const currentPage = Math.min(page, maxPage);
+
+	useEffect(() => {
+		if (page > maxPage && maxPage >= 1) {
+			setPage(maxPage);
+			setSearchParams(
+				filtersToSearchParams(filteredFields, sortMethod, { page: maxPage, pageSize }),
+				{ replace: true }
+			);
+		}
+	}, [page, maxPage, pageSize, filteredFields, sortMethod, setSearchParams]);
 
 	return (
 		<Content style={{ padding: "24px 50px" }}>
@@ -102,9 +170,11 @@ export function GamesListScreen() {
 							currentFilter={filteredFields}
 							sortMethod={sortMethod}
 							possibleValues={filterAvailableValues}
-							onSortMethodChanged={(sortMethod: SortMethod) => setSortMethod(sortMethod)}
+							onSortMethodChanged={(newSort: SortMethod) =>
+								applyFiltersAndSort(filteredFields, newSort)
+							}
 							onSomeFilterChanged={(newFilter: GameFieldsPossibleValues) =>
-								setFilteredFields(newFilter)
+								applyFiltersAndSort(newFilter, sortMethod)
 							}
 						/>
 					</div>
@@ -124,6 +194,9 @@ export function GamesListScreen() {
 						error={error}
 						games={filteredGames}
 						onRetry={loadGamesData}
+						currentPage={currentPage}
+						pageSize={pageSize}
+						onPageChange={onPageChange}
 					/>
 				</Col>
 			</Row>

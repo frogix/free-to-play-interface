@@ -50,9 +50,9 @@ export default function GameFilters({
 				borderRadius: 8,
 				boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
 			}}
-			bodyStyle={{ padding: '16px 20px' }}
+			styles={{ body: { padding: '16px 20px' } }}
 		>
-			<Space direction="vertical" size="middle" style={{ width: '100%' }}>
+			<Space orientation="vertical" size="middle" style={{ width: '100%' }}>
 				<div>
 					<Title level={4} style={{ margin: '0 0 12px 0', color: '#1890ff' }}>
 						Genre
@@ -61,7 +61,7 @@ export default function GameFilters({
 						mode="multiple"
 						style={{ width: "100%" }}
 						placeholder="Select genres..."
-						defaultValue={undefined}
+						defaultValue={currentFilter?.genre}
 						onChange={(value) => onSomeFilterChanged({
 							...currentFilter,
 							genre: value as string[],
@@ -82,7 +82,7 @@ export default function GameFilters({
 						mode="multiple"
 						style={{ width: "100%" }}
 						placeholder="Select platforms..."
-						defaultValue={undefined}
+						defaultValue={currentFilter?.platform}
 						onChange={(value) => onSomeFilterChanged({
 							...currentFilter,
 							platform: value as string[],
@@ -105,7 +105,7 @@ export default function GameFilters({
 						<Col span={18}>
 							<FilterSelect
 								placeholder="Sort by..."
-								defaultValue={"title"}
+								defaultValue={sortMethod.field}
 								onChange={(value) => onSortMethodChanged({ ...sortMethod, field: value as SortField })}
 								options={Object.keys(sortByFieldsMap).map((k) => ({
 									label: sortByFieldsMap[k as SortField],

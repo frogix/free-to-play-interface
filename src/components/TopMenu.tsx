@@ -1,18 +1,26 @@
 import { LeftOutlined } from "@ant-design/icons";
 import Menu from "antd/es/menu";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./TopMenu.css";
+import { MouseEventHandler } from "react";
 
 
 export function TopMenu() {
 	const location = useLocation();
+	const navigate = useNavigate();
+
+	const handleBackClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
+		e.preventDefault();
+		navigate(-1);
+	};
 
 	const items = [
 		{
 			key: "1",
 			label:
 				<Link
-					to="/"
+					onClick={handleBackClick}
+					to=".."
 					style={{
 						position: "relative",
 					}}

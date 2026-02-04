@@ -20,7 +20,7 @@ export function DetailedGameCardSkeleton() {
 
 				<Row gutter={24} style={{ marginTop: '24px' }}>
 					<Col lg={14} xs={24}>
-						<Card style={{ marginBottom: '16px', borderRadius: '8px' }} bodyStyle={{ padding: 0 }}>
+						<Card style={{ marginBottom: '16px', borderRadius: '8px' }} styles={{ body: { padding: 0 } }}>
 							<Skeleton.Image className="full-width-skeleton" style={{ width: '100%', height: '350px' }} />
 						</Card>
 					</Col>

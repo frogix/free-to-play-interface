@@ -78,7 +78,10 @@ export const getFieldsPossibleValues = (abortSignal: AbortSignal): Promise<GameF
 			return response.json();
 		})
 		.catch((err) => {
-			console.error("An error has occurred during the retrieval of game fields possible options", err);
+			if (err.name !== "AbortError") {
+				console.error("An error has occurred during the retrieval of game fields possible options", err);
+			}
+
 			throw new Error(err.message || "Network error: Unable to load filter options");
 		});
 };
@@ -126,7 +129,10 @@ export const getGamesList = (abortSignal: AbortSignal): Promise<GameInfo[]> => {
 			return games.map(parseGameObject);
 		})
 		.catch((err) => {
-			console.error("An error has occurred during the retrieval of games list", err);
+			if (err.name !== "AbortError") {
+				console.error("An error has occurred during the retrieval of games list", err);
+			}
+
 			throw new Error(err.message || "Network error: Unable to load games list");
 		});
 };
@@ -155,7 +161,10 @@ export const getGameInfo = (gameId: number, abortSignal: AbortSignal): Promise<D
 			return parseGameObject(gameData);
 		})
 		.catch((error) => {
-			console.error("An error has occurred during the retrieval of game info", error);
+			if (error.name !== "AbortError") {
+				console.error("An error has occurred during the retrieval of game info", error);
+			}
+
 			if (error.message === "Game not found") {
 				return null;
 			}

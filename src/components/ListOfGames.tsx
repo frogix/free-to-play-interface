@@ -3,32 +3,35 @@ import type { PaginationProps } from "antd/es/pagination";
 import { GameInfo } from "../api/games";
 import { GameCard, GameCardSkeleton } from "./GameCard";
 import { NetworkErrorDisplay, GenericErrorDisplay } from "./ErrorDisplay";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 interface ListOfGamesProps {
 	games: GameInfo[];
 	isLoading: boolean;
 	error?: Error | null;
 	onRetry?: () => void;
+	currentPage: number;
+	pageSize: number;
+	onPageChange: (page: number, pageSize: number) => void;
 }
 
-export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesProps) {
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageSize, setCurrentPageSize] = useState(10);
-
+export function ListOfGames({
+	games,
+	isLoading,
+	error,
+	onRetry,
+	currentPage,
+	pageSize,
+	onPageChange
+}: ListOfGamesProps) {
 	const gameListStartDiv = useRef<HTMLDivElement | null>(null);
 
-	const gamesOnPage = games.slice(currentPageSize * (currentPage - 1), currentPageSize * currentPage);
+	const gamesOnPage = games.slice(pageSize * (currentPage - 1), pageSize * currentPage);
 
-	const onPageChanged: PaginationProps['onChange'] = (page, pageSize) => {
-		setCurrentPage(page);
-		setCurrentPageSize(pageSize);
+	const onPageChanged: PaginationProps["onChange"] = (page, newPageSize) => {
+		onPageChange(page, newPageSize);
 		gameListStartDiv.current?.scrollIntoView({ behavior: "smooth" });
-	}
-
-	if ((currentPage - 1) * currentPageSize > games.length) {
-		setCurrentPage(1);
-	}
+	};
 
 	if (isLoading) {
 		return (
@@ -74,8 +77,7 @@ export function ListOfGames({ games, isLoading, error, onRetry }: ListOfGamesPro
 
 			<Pagination
 				current={currentPage}
-				defaultCurrent={currentPage}
-				defaultPageSize={currentPageSize}
+				pageSize={pageSize}
 				style={{ marginBottom: 30, textAlign: "center" }}
 				onChange={onPageChanged}
 				total={games.length}
