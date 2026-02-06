@@ -6,6 +6,7 @@ import { RouterProvider, createHashRouter } from "react-router-dom";
 import "./index.css";
 import { Root } from "./routes/root.tsx";
 import { GameCardPage } from "./routes/game.tsx";
+import { SuspenseFallback } from "./SuspenseFallback.tsx";
 
 const GamesListScreen = lazy(() => import("./components/GamesListScreen.tsx"));
 
@@ -18,7 +19,7 @@ const router = createHashRouter(
 				{
 					index: true,
 					element: (
-						<Suspense fallback={<div>Loading...</div>}>
+						<Suspense fallback={<SuspenseFallback />}>
 							<GamesListScreen />
 						</Suspense>
 					)
