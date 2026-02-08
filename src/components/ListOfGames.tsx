@@ -15,6 +15,13 @@ interface ListOfGamesProps {
 	onPageChange: (page: number, pageSize: number) => void;
 }
 
+const listOfGamesDivStyle = {
+	display: 'grid',
+	gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+	gap: '16px',
+	marginBottom: '24px'
+};
+
 export function ListOfGames({
 	games,
 	isLoading,
@@ -23,6 +30,7 @@ export function ListOfGames({
 	currentPage,
 	pageSize,
 	onPageChange
+
 }: ListOfGamesProps) {
 	const gameListStartDiv = useRef<HTMLDivElement | null>(null);
 
@@ -35,14 +43,7 @@ export function ListOfGames({
 
 	if (isLoading) {
 		return (
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-					gap: '16px',
-					marginBottom: '24px'
-				}}
-			>
+			<div style={listOfGamesDivStyle}>
 				{new Array(6).fill(0).map((_, i) => (
 					<GameCardSkeleton key={i} />
 				))}
@@ -62,16 +63,10 @@ export function ListOfGames({
 		<>
 			<div
 				ref={gameListStartDiv}
-				style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-					gap: '16px',
-					marginBottom: '24px'
-				}}
+				style={listOfGamesDivStyle}
 			>
 				{gamesOnPage.map(game => (
 					<GameCard key={game.id} {...game} />
-
 				))}
 			</div>
 

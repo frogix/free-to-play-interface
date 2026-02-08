@@ -37,7 +37,10 @@ export function GameCardSkeleton() {
 			}}
 		>
 			<Skeleton active={true} paragraph={false} />
-			<Skeleton.Image active style={{ width: '100%', height: 200 }} />
+			<Skeleton.Image active styles={{
+				root: { width: '100%', height: 200 },
+				content: { width: '100%', height: 200 }
+			}} />
 			<Skeleton active={true} title={false} />
 		</Card>
 	);

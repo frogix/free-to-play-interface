@@ -99,10 +99,11 @@ export function DetailedGameCard(game: DetailedGameInfo) {
 									style={{ borderRadius: '8px' }}
 									autoplaySpeed={4000}
 								>
-									{game.screenshots.map((s) => (
+									{game.screenshots.map((s, index) => (
 										<div key={s.id}>
 											<ImageWithSkeleton
 												src={s.image}
+												alt={`${game.title} +  screenshot #${index + 1}`}
 											/>
 										</div>
 									))}
