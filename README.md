@@ -1,27 +1,132 @@
-# React + TypeScript + Vite
+# Free to Play Games
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Интерфейс каталога бесплатных игр на основе данных [FreeToGame API](https://www.freetogame.com/). Проект развёрнут на GitHub Pages.
 
-Currently, two official plugins are available:
+**Демо:** [frogix.github.io/free-to-play-interface](https://frogix.github.io/free-to-play-interface/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Что сделано
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Список игр** — карточки с превью, жанром, платформами, описанием и датой выхода.
+- **Детальная страница игры** — описание, системные требования, скриншоты в карусели.
+- **Фильтры и сортировка** — по жанру, платформе; сортировка по названию и дате выхода (по возрастанию/убыванию).
+- **Пагинация** — настраиваемый размер страницы (5–100), переход по страницам с прокруткой к началу списка.
+- **Адаптивная вёрстка** — сетка карточек и сайдбар с фильтрами подстраиваются под ширину экрана.
+- **Обработка ошибок** — отдельные экраны для сетевых ошибок, 404 по игре и общих ошибок с возможностью повтора запроса.
+- **Навигация** — верхнее меню с кнопкой «назад» на странице игры.
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+## Технические решения
+
+### Синхронизация состояния с URL
+
+Фильтры, сортировка и пагинация хранятся в query-параметрах (`?genre=...&platform=...&sort=...&asc=...&page=...&pageSize=...`). Приложение при загрузке читает их из `URLSearchParams`, а при изменении фильтров/сортировки/страницы обновляет URL через `setSearchParams` с `replace: true`. В результате:
+
+- можно делиться ссылкой на отфильтрованный и отсортированный список;
+- фильтры сохраняются при переходе с карточки игры назад к общему списку.
+
+Используется **HashRouter**, чтобы корректно работало развёртывание на GitHub Pages (без настройки серверного редиректа). Парсинг query вынесен в `filterSearchParams.ts`: отдельные функции для фильтров, сортировки и пагинации, валидация полей и границ (min/max страницы и размера страницы).
+
+### Кэширование и загрузка данных (React Query)
+
+- Списки игр и опции фильтров запрашиваются через **TanStack React Query** с общим `queryKey` для списка и для опций.
+- Детали игры — по `queryKey: ["game", gameId]`, кэш переиспользуется при возврате на карточку.
+- Настроены `staleTime` и `gcTime` (5 мин), чтобы не дёргать API при переключении между страницами.
+- Все запросы принимают `AbortSignal`; при размонтировании или смене запроса предыдущий отменяется, избегая утечек и гонок.
+
+### BlurHash для превью
+
+В карточках списка для обложек используется **BlurHash**: пока изображение грузится, показывается размытый placeholder по хешу из API (`thumbnail_lazy.hash`). Это даёт быстрый визуальный отклик без лишних запросов больших картинок.
+
+### Lazy loading маршрутов и компонентов
+
+- **Список игр** (`GamesListScreen`) и **детальная карточка** (`DetailedGameCard`) подгружаются через `React.lazy()`.
+- Для маршрутов заданы `Suspense` и скелетоны (список — общий fallback, карточка игры — `DetailedGameCardSkeleton`), чтобы не было пустого экрана при переходе.
+
+### Нормализация данных с API
+
+Ответы API приводятся к единому виду в одном месте (`api/games.ts`):
+
+- даты парсятся из строк в `Date`, с обработкой некорректных значений (например, `YYYY-MM-00` → замена дня на `01`);
+- платформа приходит строкой через запятую — разбивается в массив;
+- типы описаны через интерфейсы (`GameInfo`, `DetailedGameInfo`, `GameFieldsPossibleValues` и т.д.), что упрощает типизацию фильтров и компонентов.
+
+### Клиентская фильтрация и сортировка
+
+Список игр загружается один раз; фильтрация по жанру/платформе и сортировка выполняются на клиенте. Так уменьшается количество запросов и сохраняется отзывчивость при смене фильтров и сортировки. Пагинация тоже клиентская — слайс массива по `page` и `pageSize`.
+
+### CI/CD
+
+Сборка и публикация на GitHub Pages настроены через **GitHub Actions**: при пуше в `main` и при ручном запуске workflow выполняются `npm ci`, `npm run build`, загрузка артефакта и деплой в Pages.
+
+### Бэкенд
+
+Запросы к FreeToGame API идут не напрямую, а через развёрнутый сервер: **nginx** проксирует их к FreeToGame API. На сервере включено **кэширование контента**, чтобы снизить нагрузку на внешний API и ускорить ответы. Чтобы клиент загружал превью и скриншоты тоже через прокси (и кэш), настроена **динамическая подмена URL**: в ответах nginx через **sub_filter** заменяет в JSON пути на картинки с домена FreeToGame на адрес кэширующего сервера. Отдельно на **Node.js** реализован API-маршрут для **опций фильтров** (список жанров, платформ и т.п.) — такого эндпоинта в исходном FreeToGame API нет; бэкенд собирает уникальные значения по данным игр и отдаёт их фронту.
+
+---
+
+## Стек
+
+| Категория        | Технологии |
+|------------------|------------|
+| Сборка           | Vite 7, TypeScript |
+| UI               | React 18, Ant Design 6 |
+| Роутинг          | React Router 6 (HashRouter) |
+| Данные           | TanStack React Query 5 |
+| Изображения      | BlurHash, react-blurhash |
+| Бэкенд           | nginx (прокси, кэширование), Node.js (API опций фильтров) |
+| Деплой           | GitHub Pages, GitHub Actions |
+| Качество кода    | ESLint, Husky |
+
+---
+
+## Запуск локально
+
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Открыть в браузере адрес, который выведет Vite (обычно `http://localhost:5173`).
+
+Сборка:
+
+```bash
+npm run build
+```
+
+Превью собранной версии:
+
+```bash
+npm run preview
+```
+
+---
+
+## Скрипты
+
+| Команда           | Описание |
+|-------------------|----------|
+| `npm run dev`     | Запуск dev-сервера |
+| `npm run build`   | Проверка типов и сборка |
+| `npm run preview` | Просмотр production-сборки |
+| `npm run lint`    | Проверка ESLint |
+| `npm run lint:fix`| Автоисправление по ESLint |
+| `npm run type:check` | Проверка типов без сборки |
+| `npm run deploy`  | Деплой на GitHub Pages (после `predeploy` → build) |
+
+---
+
+## Структура проекта
+
+```
+src/
+├── api/           # Запросы к API, типы, парсинг ответов
+├── components/    # Карточки игр, фильтры, список, ошибки, скелетоны
+├── routes/        # Root layout, страница детальной карточки, loaders
+├── utils/         # Парсинг и формирование query-параметров (фильтры, сортировка, пагинация)
+├── main.tsx       # Роутер, lazy-маршруты, Suspense
+└── index.css      # Глобальные стили
+```
