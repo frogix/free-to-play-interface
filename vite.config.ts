@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -9,12 +10,18 @@ export default defineConfig(({ mode }) => {
 		base: mode === "production" ? "/free-to-play-interface/" : "",
 		plugins: [
 			react(),
-			visualizer({ 
-				open: true, 
+			visualizer({
+				open: true,
 				gzipSize: true,
 				filename: 'dist/stats.html'
 			})
 		],
+		test: {
+			globals: true,
+			environment: 'jsdom',
+			setupFiles: './src/test/setup.ts',
+			include: ['src/**/*.{test,spec}.{ts,tsx}'],
+		},
 		build: {
 			target: 'es2015',
 			minify: 'esbuild',
